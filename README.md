@@ -1,48 +1,72 @@
 # Inferential Stats Webapp
 
-A scroll-guided visual lesson on statistical inference, built from the supplied course PDF and extended into more advanced inferential topics.
+A long-form, scroll-guided visual course on statistical inference. It begins with the concepts in the supplied PDF and then extends into intermediate and advanced inference.
 
-## Design
+## Visual system
 
-- Single background color: `#FFF2B4`
+- Single background: `#FFF2B4`
 - Restricted palette only:
   - `#15370D`
   - `#728E6D`
   - `#E5CD82`
   - `#FFF2B4`
-- Large but controlled typography
-- Strict two-zone layout: text and animation never share the same positioning plane
+- Two-zone layout: text and animation are structurally separated
+- Graphics remain clipped inside dedicated visual stages
 - Scroll-driven sticky chapters
-- Graphics are clipped inside dedicated animation stages
-- IntersectionObserver blur pop-ups for annotations
+- IntersectionObserver blur annotations
 - Responsive mobile layout
-- Medium paper/grain texture
+- Paper/grain texture
 
-## Learning sequence
+## Course map
 
-### Foundation from the supplied PDF
+### PDF foundation
 1. Population vs. Sample
 2. Parameters vs. Statistics
-3. Point Estimation
-4. Confidence Intervals
-5. Hypothesis Testing
-6. p-values
+3. Sampling Distributions
+4. Point Estimation and Standard Error
+5. Confidence Intervals
+6. Hypothesis Testing
+7. p-values
+8. Type I Error, Type II Error, and Power
+9. Likelihood and Maximum Likelihood
+10. Bayesian Updating
 
-### Extended topics added beyond the supplied PDF
-7. Sampling Distributions
-8. Standard Error and Precision
-9. Type I / Type II Errors and Statistical Power
-10. Likelihood and Maximum Likelihood Estimation
-11. Bayesian Updating and Frequentist-vs-Bayesian Interpretation
+### Extended inference
+11. Law of Large Numbers and Central Limit Theorem
+12. Bias, Variance, MSE, Consistency, and Efficiency
+13. Sufficiency
+14. t, Chi-square, and F Distributions
+15. Pivotal Quantities
+16. Likelihood Ratio, Wald, and Score Tests
+17. Fisher Information and the Cramér–Rao Bound
+18. Bootstrap Inference
+19. Permutation and Randomization Tests
+20. Rank-based and Nonparametric Inference
+21. Multiple Comparisons, FWER, and FDR
+22. Effect Sizes and Practical Significance
+23. ANOVA and Variance Decomposition
+24. Regression Inference
+25. Categorical-data Inference
+26. Model Assumptions and Diagnostics
+27. Robust and Sandwich Standard Errors
+28. Bayesian Credible Intervals and Posterior Predictive Inference
+29. Bayes Factors and Bayesian Model Comparison
+30. Statistical Decision Theory
+31. Sequential Inference and Optional Stopping
+32. Statistical vs. Causal Inference
+33. Missing Data and Inferential Validity
+34. Meta-analysis
 
-The website intentionally does not include an "Introduction to Statistical Inference" section.
+The website intentionally does **not** include a generic "Introduction to Statistical Inference" chapter.
+
+## Source boundary
+
+Chapters covering populations/samples, parameters/statistics, point estimation, confidence intervals, hypothesis testing, and p-values are grounded in the supplied PDF. The broader advanced curriculum is an extension beyond that source.
 
 ## Fonts
 
-The CSS includes named hooks for Amoria, Bremlin, and Verve, with safe fallbacks.
-
-Restricted font files are not redistributed in this public repository. Licensed font files can be added later with `@font-face` rules.
+The CSS retains named hooks for Amoria, Bremlin, and Verve with safe fallbacks. Restricted font files are not redistributed in this public repository.
 
 ## Netlify
 
-This is a static site. Publish from the repository root. No build command is required.
+Static site. Publish from the repository root. No build command is required.
