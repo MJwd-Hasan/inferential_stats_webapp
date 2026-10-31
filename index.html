@@ -231,13 +231,41 @@ strong{font-weight:900}
   .p-chip{width:92px;height:92px;font-size:.68rem}
 }
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+
+/* extended inference chapters */
+.advanced .stage{display:grid;place-items:center;padding:6%}
+.concept-grid{width:100%;height:100%;display:grid;grid-template-columns:1fr 1fr;gap:14px;align-content:center}
+.concept-card{border:2px solid var(--forest);border-radius:24px;padding:1rem;background:var(--cream);min-width:0;opacity:0;transform:translateY(24px) scale(.96)}
+.concept-card.gold{background:var(--gold)}.concept-card.sage{background:var(--sage)}
+.concept-card strong{display:block;font:1.35rem var(--title);margin-bottom:.35rem}
+.concept-card p{font-size:.86rem;line-height:1.38}
+.formula-card{grid-column:1/-1;border:2px dashed var(--forest);border-radius:20px;padding:.85rem 1rem;background:rgba(255,242,180,.72);font:900 clamp(.9rem,1.35vw,1.15rem) var(--transition);text-align:center;opacity:0;transform:translateY(18px)}
+.axis-demo{position:relative;width:100%;height:100%}
+.axis-line{position:absolute;left:9%;right:9%;top:54%;height:4px;background:var(--forest);border-radius:10px}
+.axis-mark{position:absolute;top:47%;width:18px;height:18px;border-radius:50%;background:var(--gold);border:2px solid var(--forest);opacity:0}
+.axis-band{position:absolute;top:42%;height:24%;border:2px solid var(--sage);border-radius:999px;opacity:0}
+.stack-bars{position:absolute;inset:10%;display:flex;align-items:flex-end;gap:7px}
+.stack-bars i{flex:1;background:var(--sage);border:2px solid var(--forest);border-radius:10px 10px 4px 4px;transform-origin:bottom;transform:scaleY(.03);min-width:5px}
+.flow-row{width:100%;display:grid;grid-template-columns:1fr auto 1fr auto 1fr;gap:10px;align-items:center}
+.flow-node{border:2px solid var(--forest);border-radius:24px;padding:1rem;text-align:center;background:var(--cream);opacity:0;transform:translateY(20px)}
+.flow-node.gold{background:var(--gold)}.flow-node.sage{background:var(--sage)}
+.flow-node strong{display:block;font:1.3rem var(--title);margin-bottom:.3rem}
+.flow-node p{font-size:.8rem}.flow-arrow{font:2rem var(--title);opacity:0}
+.advanced .callout{right:5%;bottom:5%}
+@media(max-width:900px){
+ .concept-grid{gap:9px}.concept-card{padding:.8rem}.concept-card strong{font-size:1.1rem}.concept-card p{font-size:.75rem}
+ .formula-card{font-size:.75rem;padding:.65rem}
+ .flow-row{grid-template-columns:1fr;grid-template-rows:auto auto auto auto auto;gap:6px}.flow-arrow{transform:rotate(90deg);font-size:1.4rem}
+ .flow-node{padding:.7rem}.flow-node strong{font-size:1rem}.flow-node p{font-size:.72rem}
+}
+
 </style>
 </head>
 <body>
 <nav class="progress-ui">
   <b>INFERENCE / IN MOTION</b>
   <div class="track"><i id="globalBar"></i></div>
-  <span class="counter" id="counter">01 / 10</span>
+  <span class="counter" id="counter">01 / 34</span>
 </nav>
 
 <main>
@@ -471,14 +499,470 @@ strong{font-weight:900}
   </div>
 </section>
 
-<section class="chapter final short" data-step="10">
+
+<section class="chapter advanced long llnclt" data-step="11">
+  <div class="sticky">
+    <div class="layout">
+      <div class="copy">
+        <div class="kicker">11 — law of large numbers & central limit theorem</div>
+        <h2>Why do averages stabilize and become approximately normal?</h2>
+        <p>The <strong>Law of Large Numbers</strong> says sample averages tend toward the population mean as sample size grows. The <strong>Central Limit Theorem</strong> says that, under broad conditions, the standardized sampling distribution of a sum or mean becomes approximately normal as n increases.</p>
+        <p class="tiny">LLN explains convergence. CLT explains an approximate distribution for fluctuations around the target.</p>
+      </div>
+      <div class="stage">
+        <div class="concept-grid">
+          <article class="concept-card gold"><strong>LLN</strong><p>x̄ → μ as n grows</p></article><article class="concept-card sage"><strong>CLT</strong><p>√n(x̄ − μ) / σ approaches a standard normal form</p></article><article class="concept-card "><strong>Why it matters</strong><p>Normal-based intervals and tests often rely on this approximation</p></article><article class="concept-card "><strong>Caution</strong><p>Heavy tails, dependence, or small n can make convergence slow</p></article>
+          <div class="formula-card">Large samples do not make biased designs representative; asymptotics cannot repair bad sampling.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="chapter advanced long estprops" data-step="12">
+  <div class="sticky">
+    <div class="layout">
+      <div class="copy">
+        <div class="kicker">12 — properties of estimators</div>
+        <h2>Not all estimators are equally good.</h2>
+        <p>We compare estimators by <strong>bias</strong>, <strong>variance</strong>, <strong>mean squared error</strong>, <strong>consistency</strong>, and <strong>efficiency</strong>. An estimator can trade a little bias for much lower variance and still have lower overall MSE.</p>
+        <p class="tiny">MSE(θ̂) = Var(θ̂) + Bias(θ̂)².</p>
+      </div>
+      <div class="stage">
+        <div class="concept-grid">
+          <article class="concept-card gold"><strong>Bias</strong><p>E(θ̂) − θ</p></article><article class="concept-card "><strong>Variance</strong><p>How much θ̂ changes across samples</p></article><article class="concept-card sage"><strong>Consistency</strong><p>θ̂ converges to θ as n grows</p></article><article class="concept-card "><strong>Efficiency</strong><p>More information with less sampling variance</p></article>
+          <div class="formula-card">Good estimation is a bias–variance–information problem, not simply “unbiased = best.”</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="chapter advanced long sufficiency" data-step="13">
+  <div class="sticky">
+    <div class="layout">
+      <div class="copy">
+        <div class="kicker">13 — sufficiency</div>
+        <h2>Can a statistic retain all sample information about a parameter?</h2>
+        <p>A statistic is <strong>sufficient</strong> for a parameter when, once that statistic is known, the remaining details of the sample contain no additional information about that parameter within the assumed model.</p>
+        <p class="tiny">The Fisher–Neyman factorization theorem gives a practical route for recognizing sufficiency in many parametric models.</p>
+      </div>
+      <div class="stage">
+        <div class="concept-grid">
+          <article class="concept-card "><strong>Full data</strong><p>x₁, x₂, …, xₙ</p></article><article class="concept-card gold"><strong>Compress</strong><p>replace the sample by T(X)</p></article><article class="concept-card sage"><strong>Sufficient statistic</strong><p>retains all model-based information about θ</p></article><article class="concept-card "><strong>Example idea</strong><p>For Bernoulli data, the number of successes summarizes p</p></article>
+          <div class="formula-card">Sufficiency is model-dependent: the same statistic may be sufficient in one model and not another.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="chapter advanced long exactdists" data-step="14">
+  <div class="sticky">
+    <div class="layout">
+      <div class="copy">
+        <div class="kicker">14 — t, chi-square, and F distributions</div>
+        <h2>Different unknown quantities create different reference distributions.</h2>
+        <p>When population variance is unknown, standardized means often lead to the <strong>t distribution</strong>. Variance inference for normal data uses <strong>chi-square</strong>. Ratios of scaled variances lead to the <strong>F distribution</strong>.</p>
+        <p class="tiny">These are exact finite-sample results under specific assumptions, especially normality and independence.</p>
+      </div>
+      <div class="stage">
+        <div class="concept-grid">
+          <article class="concept-card gold"><strong>t</strong><p>Means with estimated σ</p></article><article class="concept-card "><strong>χ²</strong><p>Variance and goodness-of-fit building block</p></article><article class="concept-card sage"><strong>F</strong><p>Variance ratios, ANOVA, regression tests</p></article><article class="concept-card "><strong>Degrees of freedom</strong><p>Controls the shape of each reference distribution</p></article>
+          <div class="formula-card">Reference distributions encode uncertainty created by estimating unknown quantities.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="chapter advanced long pivots" data-step="15">
+  <div class="sticky">
+    <div class="layout">
+      <div class="copy">
+        <div class="kicker">15 — pivotal quantities</div>
+        <h2>Build inference from a quantity whose distribution does not depend on the unknown parameter.</h2>
+        <p>A <strong>pivot</strong> is a function of data and parameters with a known distribution that is free of unknown nuisance quantities. Pivots can be inverted to construct exact confidence intervals and tests.</p>
+        <p class="tiny">The classic z and t statistics are examples of pivotal or approximately pivotal constructions.</p>
+      </div>
+      <div class="stage">
+        <div class="concept-grid">
+          <article class="concept-card "><strong>Data</strong><p>observed X</p></article><article class="concept-card gold"><strong>Parameter</strong><p>unknown θ</p></article><article class="concept-card sage"><strong>Pivot</strong><p>Q(X,θ) has known distribution</p></article><article class="concept-card "><strong>Invert</strong><p>solve probability bounds for θ</p></article>
+          <div class="formula-card">Known distribution + observed data → probability statement about a pivot → interval for θ.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="chapter advanced long lrt" data-step="16">
+  <div class="sticky">
+    <div class="layout">
+      <div class="copy">
+        <div class="kicker">16 — likelihood ratio, Wald, and score tests</div>
+        <h2>Three major large-sample routes to hypothesis testing.</h2>
+        <p>The <strong>likelihood ratio test</strong> compares the best fit under H₀ with the best unrestricted fit. The <strong>Wald test</strong> measures how far an estimate lies from the null in standard-error units. The <strong>score test</strong> asks how strongly the likelihood wants to move away from H₀.</p>
+        <p class="tiny">Under regular conditions, these tests are asymptotically equivalent but can differ noticeably in small samples.</p>
+      </div>
+      <div class="stage">
+        <div class="concept-grid">
+          <article class="concept-card gold"><strong>Likelihood ratio</strong><p>Compare fitted likelihoods</p></article><article class="concept-card "><strong>Wald</strong><p>Estimate − null over SE</p></article><article class="concept-card sage"><strong>Score</strong><p>Slope of log-likelihood at H₀</p></article><article class="concept-card "><strong>Wilks idea</strong><p>2 log-likelihood difference often approaches χ²</p></article>
+          <div class="formula-card">Same asymptotic destination, different local geometry and finite-sample behavior.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="chapter advanced long fisherinfo" data-step="17">
+  <div class="sticky">
+    <div class="layout">
+      <div class="copy">
+        <div class="kicker">17 — Fisher information & Cramér–Rao</div>
+        <h2>How much information about θ is contained in the sample?</h2>
+        <p><strong>Fisher information</strong> measures how sharply the likelihood changes around the true parameter. More curvature means the data distinguish nearby parameter values more strongly. The <strong>Cramér–Rao bound</strong> gives a lower variance bound for unbiased estimators under regularity conditions.</p>
+        <p class="tiny">Independent observations often contribute information additively.</p>
+      </div>
+      <div class="stage">
+        <div class="concept-grid">
+          <article class="concept-card "><strong>Flat likelihood</strong><p>less information, wider uncertainty</p></article><article class="concept-card gold"><strong>Sharp likelihood</strong><p>more information, tighter uncertainty</p></article><article class="concept-card sage"><strong>Information adds</strong><p>Iₙ(θ) often = nI₁(θ)</p></article><article class="concept-card "><strong>CR lower bound</strong><p>Var(θ̂) ≥ 1 / I(θ)</p></article>
+          <div class="formula-card">Information connects likelihood curvature, estimator precision, and asymptotic standard errors.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="chapter advanced long bootstrap" data-step="18">
+  <div class="sticky">
+    <div class="layout">
+      <div class="copy">
+        <div class="kicker">18 — bootstrap inference</div>
+        <h2>When formulas are hard, resample the observed data.</h2>
+        <p>The <strong>bootstrap</strong> repeatedly samples with replacement from the observed dataset, recalculating the statistic each time. The resulting empirical distribution approximates the estimator’s sampling distribution.</p>
+        <p class="tiny">Bootstrap standard errors, percentile intervals, basic intervals, and BCa intervals are common variants.</p>
+      </div>
+      <div class="stage">
+        <div class="concept-grid">
+          <article class="concept-card "><strong>Observed sample</strong><p>n observations</p></article><article class="concept-card gold"><strong>Resample</strong><p>draw n with replacement</p></article><article class="concept-card sage"><strong>Recalculate</strong><p>θ̂* for each bootstrap sample</p></article><article class="concept-card "><strong>Approximate uncertainty</strong><p>use the distribution of θ̂*</p></article>
+          <div class="formula-card">Bootstrap works best when the empirical sample is a reasonable stand-in for the population-generating process.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="chapter advanced long permutation" data-step="19">
+  <div class="sticky">
+    <div class="layout">
+      <div class="copy">
+        <div class="kicker">19 — permutation and randomization tests</div>
+        <h2>What would happen if group labels were exchangeable under H₀?</h2>
+        <p>A <strong>permutation test</strong> builds a null distribution by repeatedly rearranging labels or assignments in ways justified by the null hypothesis and the study design.</p>
+        <p class="tiny">In randomized experiments, randomization inference can be especially compelling because it follows the actual assignment mechanism.</p>
+      </div>
+      <div class="stage">
+        <div class="concept-grid">
+          <article class="concept-card "><strong>Observed statistic</strong><p>difference, correlation, etc.</p></article><article class="concept-card gold"><strong>Shuffle under H₀</strong><p>reassign labels</p></article><article class="concept-card sage"><strong>Null distribution</strong><p>statistics from shuffled data</p></article><article class="concept-card "><strong>p-value</strong><p>fraction as extreme as observed</p></article>
+          <div class="formula-card">Permutation validity depends on exchangeability or a justified randomization mechanism.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="chapter advanced long nonparametric" data-step="20">
+  <div class="sticky">
+    <div class="layout">
+      <div class="copy">
+        <div class="kicker">20 — rank-based and nonparametric inference</div>
+        <h2>Inference does not always need a fully specified parametric distribution.</h2>
+        <p>Rank-based procedures such as the <strong>Wilcoxon</strong>, <strong>Mann–Whitney</strong>, and <strong>Kruskal–Wallis</strong> families reduce sensitivity to distributional shape by working with order or ranks rather than raw values.</p>
+        <p class="tiny">“Nonparametric” does not mean assumption-free; independence, exchangeability, symmetry, or equal-shape assumptions can still matter.</p>
+      </div>
+      <div class="stage">
+        <div class="concept-grid">
+          <article class="concept-card gold"><strong>Ranks</strong><p>replace magnitude with ordering</p></article><article class="concept-card "><strong>Robustness</strong><p>less driven by extreme numeric values</p></article><article class="concept-card sage"><strong>Trade-off</strong><p>may target a different estimand than a mean</p></article><article class="concept-card "><strong>Use carefully</strong><p>interpret the actual null being tested</p></article>
+          <div class="formula-card">Choose the method for the estimand and design—not merely because a normality test rejected.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="chapter advanced long multiple" data-step="21">
+  <div class="sticky">
+    <div class="layout">
+      <div class="copy">
+        <div class="kicker">21 — multiple comparisons</div>
+        <h2>More tests create more opportunities for false discoveries.</h2>
+        <p>Testing many hypotheses inflates the chance of at least one false positive. <strong>Bonferroni</strong> and related methods control the family-wise error rate, while procedures such as <strong>Benjamini–Hochberg</strong> control the false discovery rate.</p>
+        <p class="tiny">Multiplicity arises in many outcomes, subgroup searches, feature screening, repeated looks, and post-hoc comparisons.</p>
+      </div>
+      <div class="stage">
+        <div class="concept-grid">
+          <article class="concept-card gold"><strong>FWER</strong><p>probability of ≥1 false rejection</p></article><article class="concept-card "><strong>Bonferroni</strong><p>use α/m per test</p></article><article class="concept-card sage"><strong>FDR</strong><p>expected false-discovery proportion among rejections</p></article><article class="concept-card "><strong>BH procedure</strong><p>adaptive threshold across ordered p-values</p></article>
+          <div class="formula-card">The inferential unit is often the whole family of tests, not each p-value in isolation.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="chapter advanced long effectsize" data-step="22">
+  <div class="sticky">
+    <div class="layout">
+      <div class="copy">
+        <div class="kicker">22 — effect sizes & practical significance</div>
+        <h2>Statistical significance is not the same as importance.</h2>
+        <p>An effect can be statistically detectable yet practically tiny. Report <strong>effect sizes</strong> and uncertainty: mean differences, standardized differences, risk ratios, odds ratios, correlations, or domain-specific measures.</p>
+        <p class="tiny">With huge samples, very small effects can produce tiny p-values.</p>
+      </div>
+      <div class="stage">
+        <div class="concept-grid">
+          <article class="concept-card "><strong>p-value</strong><p>evidence against a null model</p></article><article class="concept-card gold"><strong>Effect size</strong><p>magnitude of the relationship or difference</p></article><article class="concept-card sage"><strong>Confidence interval</strong><p>precision and plausible magnitude</p></article><article class="concept-card "><strong>Context</strong><p>clinical, economic, scientific importance</p></article>
+          <div class="formula-card">Ask: How large is the effect? How uncertain is it? Is that magnitude meaningful?</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="chapter advanced long anova" data-step="23">
+  <div class="sticky">
+    <div class="layout">
+      <div class="copy">
+        <div class="kicker">23 — ANOVA and variance decomposition</div>
+        <h2>Compare several group means through explained and unexplained variation.</h2>
+        <p>ANOVA partitions total variability into variation <strong>between groups</strong> and variation <strong>within groups</strong>. Their scaled ratio produces an F statistic.</p>
+        <p class="tiny">A significant omnibus F test says at least one mean differs; post-hoc comparisons are needed to locate differences while accounting for multiplicity.</p>
+      </div>
+      <div class="stage">
+        <div class="concept-grid">
+          <article class="concept-card "><strong>Total variation</strong><p>overall spread</p></article><article class="concept-card gold"><strong>Between groups</strong><p>variation explained by group means</p></article><article class="concept-card sage"><strong>Within groups</strong><p>residual variation inside groups</p></article><article class="concept-card "><strong>F ratio</strong><p>between variation / within variation</p></article>
+          <div class="formula-card">ANOVA is a linear-model comparison: does adding group indicators explain enough variation?</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="chapter advanced long regression" data-step="24">
+  <div class="sticky">
+    <div class="layout">
+      <div class="copy">
+        <div class="kicker">24 — regression inference</div>
+        <h2>Estimate conditional relationships while quantifying uncertainty.</h2>
+        <p>In linear regression, coefficients describe changes in the conditional mean associated with predictors, given the model. Standard errors support coefficient intervals and tests; the model F test evaluates groups of coefficients.</p>
+        <p class="tiny">Inference depends on assumptions about specification, independence, variance, and the meaning of conditioning variables.</p>
+      </div>
+      <div class="stage">
+        <div class="concept-grid">
+          <article class="concept-card gold"><strong>β̂</strong><p>estimated coefficient</p></article><article class="concept-card "><strong>SE(β̂)</strong><p>sampling uncertainty</p></article><article class="concept-card sage"><strong>t test / CI</strong><p>coefficient-level inference</p></article><article class="concept-card "><strong>F / Wald test</strong><p>joint inference for several coefficients</p></article>
+          <div class="formula-card">Association in a regression coefficient is not automatically a causal effect.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="chapter advanced long categorical" data-step="25">
+  <div class="sticky">
+    <div class="layout">
+      <div class="copy">
+        <div class="kicker">25 — categorical-data inference</div>
+        <h2>Counts and proportions have their own inferential toolkit.</h2>
+        <p>For contingency tables, chi-square procedures compare observed counts with counts expected under a null model. Exact procedures such as Fisher’s exact test are useful in small sparse tables.</p>
+        <p class="tiny">For binary outcomes, risk differences, risk ratios, and odds ratios often communicate more than a test alone.</p>
+      </div>
+      <div class="stage">
+        <div class="concept-grid">
+          <article class="concept-card "><strong>Observed counts</strong><p>what the table contains</p></article><article class="concept-card gold"><strong>Expected counts</strong><p>what H₀ predicts</p></article><article class="concept-card sage"><strong>χ² statistic</strong><p>aggregated discrepancy</p></article><article class="concept-card "><strong>Effect measures</strong><p>risk ratio, odds ratio, risk difference</p></article>
+          <div class="formula-card">A small p-value signals dependence; effect measures describe how large that dependence is.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="chapter advanced long diagnostics" data-step="26">
+  <div class="sticky">
+    <div class="layout">
+      <div class="copy">
+        <div class="kicker">26 — assumptions and diagnostics</div>
+        <h2>Inference is only as trustworthy as the model-data relationship.</h2>
+        <p>Diagnostics check whether assumptions behind standard errors, intervals, and tests are plausible. Important issues include <strong>independence</strong>, <strong>linearity</strong>, <strong>variance structure</strong>, <strong>distributional shape</strong>, leverage, and influential observations.</p>
+        <p class="tiny">A diagnostic is evidence about model adequacy, not a ritual checklist.</p>
+      </div>
+      <div class="stage">
+        <div class="concept-grid">
+          <article class="concept-card "><strong>Residuals</strong><p>look for structure left unexplained</p></article><article class="concept-card gold"><strong>Leverage</strong><p>unusual predictor combinations</p></article><article class="concept-card sage"><strong>Influence</strong><p>observations that strongly alter estimates</p></article><article class="concept-card "><strong>Specification</strong><p>missing nonlinearities, interactions, or variables</p></article>
+          <div class="formula-card">When assumptions fail, change the model or the inferential method—not merely the plot.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="chapter advanced long robust" data-step="27">
+  <div class="sticky">
+    <div class="layout">
+      <div class="copy">
+        <div class="kicker">27 — robust and sandwich standard errors</div>
+        <h2>Sometimes keep the coefficient model but relax the variance model.</h2>
+        <p>Heteroskedasticity-consistent or <strong>sandwich standard errors</strong> can provide asymptotically valid uncertainty estimates when the conditional variance is misspecified, under appropriate independence and regularity conditions.</p>
+        <p class="tiny">Cluster-robust standard errors extend this idea when observations are dependent within groups.</p>
+      </div>
+      <div class="stage">
+        <div class="concept-grid">
+          <article class="concept-card "><strong>Model estimate</strong><p>β̂ may stay unchanged</p></article><article class="concept-card gold"><strong>Naive SE</strong><p>assumes a specific variance structure</p></article><article class="concept-card sage"><strong>Robust SE</strong><p>estimates variance more flexibly</p></article><article class="concept-card "><strong>Clustered SE</strong><p>allows within-cluster dependence</p></article>
+          <div class="formula-card">Robust SEs repair some variance assumptions; they do not fix bias from omitted variables or bad identification.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="chapter advanced long bayesdeep" data-step="28">
+  <div class="sticky">
+    <div class="layout">
+      <div class="copy">
+        <div class="kicker">28 — credible intervals & posterior predictive inference</div>
+        <h2>Bayesian uncertainty can be summarized directly from the posterior.</h2>
+        <p>A <strong>credible interval</strong> contains a chosen posterior probability for a parameter under the specified model and prior. <strong>Posterior predictive</strong> distributions integrate over parameter uncertainty to predict future or replicated data.</p>
+        <p class="tiny">Posterior predictive checks compare replicated data from the fitted model with patterns in the observed data.</p>
+      </div>
+      <div class="stage">
+        <div class="concept-grid">
+          <article class="concept-card gold"><strong>Posterior</strong><p>uncertainty about θ after data</p></article><article class="concept-card "><strong>Credible interval</strong><p>posterior probability interval</p></article><article class="concept-card sage"><strong>Predictive distribution</strong><p>uncertainty about future data</p></article><article class="concept-card "><strong>Posterior check</strong><p>does simulated data resemble observed data?</p></article>
+          <div class="formula-card">Bayesian probability statements are conditional on the model, prior, and observed data.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="chapter advanced long bayesfactor" data-step="29">
+  <div class="sticky">
+    <div class="layout">
+      <div class="copy">
+        <div class="kicker">29 — Bayes factors and model comparison</div>
+        <h2>Compare how well competing models predict the observed data before seeing it.</h2>
+        <p>A <strong>Bayes factor</strong> compares marginal likelihoods of two models. It updates prior odds between models into posterior odds.</p>
+        <p class="tiny">Bayes factors can be sensitive to prior choices because they integrate likelihood over each model’s parameter space.</p>
+      </div>
+      <div class="stage">
+        <div class="concept-grid">
+          <article class="concept-card "><strong>Prior odds</strong><p>belief before current data</p></article><article class="concept-card gold"><strong>Bayes factor</strong><p>evidence multiplier from data</p></article><article class="concept-card sage"><strong>Posterior odds</strong><p>prior odds × Bayes factor</p></article><article class="concept-card "><strong>Sensitivity</strong><p>model priors and parameter priors matter</p></article>
+          <div class="formula-card">Posterior odds = Bayes factor × prior odds.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="chapter advanced long decision" data-step="30">
+  <div class="sticky">
+    <div class="layout">
+      <div class="copy">
+        <div class="kicker">30 — statistical decision theory</div>
+        <h2>Inference can end with an action, not only an estimate.</h2>
+        <p>Decision theory combines uncertain states of nature with a <strong>loss function</strong>. A decision rule is judged by its expected loss or risk, making explicit how different mistakes are valued.</p>
+        <p class="tiny">The “best” statistical decision can change when the cost of false positives and false negatives changes.</p>
+      </div>
+      <div class="stage">
+        <div class="concept-grid">
+          <article class="concept-card "><strong>State</strong><p>unknown reality θ</p></article><article class="concept-card gold"><strong>Action</strong><p>what we choose to do</p></article><article class="concept-card sage"><strong>Loss L(a,θ)</strong><p>cost of action a under θ</p></article><article class="concept-card "><strong>Risk</strong><p>expected loss of a decision rule</p></article>
+          <div class="formula-card">Data + uncertainty + consequences → decision.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="chapter advanced long sequential" data-step="31">
+  <div class="sticky">
+    <div class="layout">
+      <div class="copy">
+        <div class="kicker">31 — sequential inference & optional stopping</div>
+        <h2>Looking at the data repeatedly changes the inferential problem.</h2>
+        <p>If researchers repeatedly test as data accumulate and stop when p < 0.05, the nominal Type I error rate can inflate. <strong>Group-sequential</strong>, <strong>alpha-spending</strong>, and related methods adjust inference for planned interim looks.</p>
+        <p class="tiny">Always distinguish a fixed-sample analysis from a design that allows data-dependent stopping.</p>
+      </div>
+      <div class="stage">
+        <div class="concept-grid">
+          <article class="concept-card "><strong>Interim looks</strong><p>inspect results before final n</p></article><article class="concept-card gold"><strong>Naive stopping</strong><p>can inflate false positives</p></article><article class="concept-card sage"><strong>Sequential design</strong><p>predefine monitoring boundaries</p></article><article class="concept-card "><strong>Alpha spending</strong><p>allocate error probability across looks</p></article>
+          <div class="formula-card">The sampling plan is part of the inferential model.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="chapter advanced long causal" data-step="32">
+  <div class="sticky">
+    <div class="layout">
+      <div class="copy">
+        <div class="kicker">32 — statistical vs. causal inference</div>
+        <h2>A strong association is not automatically a causal effect.</h2>
+        <p>Causal inference requires assumptions about how treatment or exposure relates to potential outcomes. Randomization, adjustment for confounders, matching, weighting, instruments, and natural experiments address different identification problems.</p>
+        <p class="tiny">Statistical inference quantifies uncertainty given an estimand and design; causal inference additionally asks whether the estimand has a causal interpretation.</p>
+      </div>
+      <div class="stage">
+        <div class="concept-grid">
+          <article class="concept-card "><strong>Association</strong><p>P(Y|X) relationship</p></article><article class="concept-card gold"><strong>Causal estimand</strong><p>contrast of potential outcomes</p></article><article class="concept-card sage"><strong>Identification</strong><p>connect causal quantity to observed data</p></article><article class="concept-card "><strong>Estimation</strong><p>quantify effect and uncertainty</p></article>
+          <div class="formula-card">No amount of standard-error precision can rescue an unidentified causal question.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="chapter advanced long missing" data-step="33">
+  <div class="sticky">
+    <div class="layout">
+      <div class="copy">
+        <div class="kicker">33 — missing data and inferential validity</div>
+        <h2>Missingness can change both precision and bias.</h2>
+        <p>Under <strong>MCAR</strong>, missingness is unrelated to observed and unobserved values. Under <strong>MAR</strong>, missingness may depend on observed data. <strong>MNAR</strong> allows dependence on unobserved values even after conditioning on observed information.</p>
+        <p class="tiny">Complete-case analysis, multiple imputation, weighting, and sensitivity analysis rely on different assumptions.</p>
+      </div>
+      <div class="stage">
+        <div class="concept-grid">
+          <article class="concept-card "><strong>MCAR</strong><p>missingness unrelated to data</p></article><article class="concept-card gold"><strong>MAR</strong><p>explained by observed information</p></article><article class="concept-card sage"><strong>MNAR</strong><p>still depends on unobserved values</p></article><article class="concept-card "><strong>Sensitivity</strong><p>ask how conclusions change under alternatives</p></article>
+          <div class="formula-card">Handling missing data is an inferential assumption problem, not merely a data-cleaning step.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="chapter advanced long meta" data-step="34">
+  <div class="sticky">
+    <div class="layout">
+      <div class="copy">
+        <div class="kicker">34 — meta-analysis</div>
+        <h2>Combine evidence across studies while respecting heterogeneity.</h2>
+        <p>A meta-analysis pools study-level effect estimates. <strong>Fixed-effect</strong> models target a common effect under strong homogeneity assumptions; <strong>random-effects</strong> models allow true effects to vary across studies.</p>
+        <p class="tiny">Between-study heterogeneity, publication bias, study quality, and dependence can dominate the pooled estimate.</p>
+      </div>
+      <div class="stage">
+        <div class="concept-grid">
+          <article class="concept-card "><strong>Study effects</strong><p>θ̂₁, θ̂₂, …</p></article><article class="concept-card gold"><strong>Precision weights</strong><p>more precise studies often receive more weight</p></article><article class="concept-card sage"><strong>Heterogeneity</strong><p>effects may differ across studies</p></article><article class="concept-card "><strong>Pooled estimate</strong><p>summary with uncertainty</p></article>
+          <div class="formula-card">A pooled number is useful only when the studies are sufficiently comparable for the target question.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="chapter final short" data-step="34">
   <div class="sticky">
     <div class="layout">
       <div class="copy">
         <div class="kicker">the inference map</div>
         <h2>From data to uncertainty-aware conclusions.</h2>
-        <p>The supplied guide gives the foundation: samples, parameters, point estimates, confidence intervals, hypotheses, and p-values. The later chapters extend that foundation into sampling distributions, precision, error rates, power, likelihood, and Bayesian updating.</p>
-        <div class="final-flow"><span>Sample</span><span>Statistic</span><span>Sampling distribution</span><span>SE</span><span>CI</span><span>Test</span><span>Power</span><span>Likelihood</span><span>Posterior</span></div>
+        <p>The supplied guide gives the foundation. The full scroll now continues through asymptotics, estimator theory, exact distributions, resampling, likelihood-based inference, multiple testing, regression, robust methods, Bayesian inference, decision theory, causal inference, missing data, sequential designs, and meta-analysis.</p>
+        <div class="final-flow"><span>Sample</span><span>Estimator</span><span>Sampling distribution</span><span>Asymptotics</span><span>CI</span><span>Testing</span><span>Power</span><span>Likelihood</span><span>Resampling</span><span>Regression</span><span>Robustness</span><span>Bayes</span><span>Decision</span><span>Causality</span><span>Meta-analysis</span></div>
       </div>
       <div class="stage no-frame">
         <div class="orbit" style="width:68%;left:16%;top:12%"></div>
@@ -555,7 +1039,7 @@ function render(){
     const d=Math.abs(ch.getBoundingClientRect().top);
     if(d<best){best=d;active=Number(ch.dataset.step)||1}
   });
-  counter.textContent=String(active).padStart(2,'0')+' / 10';
+  counter.textContent=String(active).padStart(2,'0')+' / 34';
 
   // hero
   {
@@ -669,10 +1153,29 @@ function render(){
     arrows.forEach((el,i)=>{const q=ease(clamp((p-.2-i*.22)/.28));el.style.opacity=String(q)});
   }
 
+
+  // all extended chapters use bounded stage-only choreography
+  document.querySelectorAll('.advanced').forEach(ch=>{
+    const p=progress(ch);
+    const cards=[...ch.querySelectorAll('.concept-card')];
+    cards.forEach((el,i)=>{
+      const q=ease(clamp((p-.05-i*.085)/.48));
+      el.style.opacity=String(q);
+      el.style.transform='translateY('+lerp(24,0,q)+'px) scale('+lerp(.96,1,q)+') rotate('+lerp(i%2?-2:2,0,q)+'deg)';
+    });
+    const formula=ch.querySelector('.formula-card');
+    if(formula){
+      const q=ease(clamp((p-.48)/.28));
+      formula.style.opacity=String(q);
+      formula.style.transform='translateY('+lerp(18,0,q)+'px)';
+    }
+  });
+
   // final symbols
   {
-    const p=progress(chapters[11]),q=ease(clamp((p-.08)/.65));
-    const stage=chapters[11].querySelector('.stage');
+    const finalChapter=document.querySelector('.final');
+    const p=progress(finalChapter),q=ease(clamp((p-.08)/.65));
+    const stage=finalChapter.querySelector('.stage');
     stage.style.opacity=String(q);
     stage.style.transform='scale('+lerp(.88,1,q)+')';
   }
