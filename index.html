@@ -3,450 +3,684 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#15370D">
+<meta name="theme-color" content="#FFF2B4">
+<meta name="description" content="A scroll-guided visual lesson on statistical inference, from samples and confidence intervals to sampling distributions, power, likelihood, and Bayesian thinking.">
 <title>Inference, in Motion</title>
 <style>
 :root{
-  --forest:#15370D;--sage:#728E6D;--gold:#E5CD82;--cream:#FFF2B4;
+  --forest:#15370D;
+  --sage:#728E6D;
+  --gold:#E5CD82;
+  --cream:#FFF2B4;
   --title:"Amoria","Cooper Black","Arial Rounded MT Bold",serif;
   --transition:"Bremlin","Trebuchet MS","Arial Rounded MT Bold",sans-serif;
   --body:"Verve","Trebuchet MS",Verdana,sans-serif;
 }
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}
-body{margin:0;background:var(--cream);color:var(--forest);font-family:var(--body);overflow-x:hidden}
-body:after{content:"";position:fixed;inset:0;z-index:999;pointer-events:none;opacity:.18;mix-blend-mode:multiply;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.25'/%3E%3C/svg%3E")}
+body{
+  margin:0;background:var(--cream);color:var(--forest);font-family:var(--body);
+  overflow-x:hidden;
+}
+body:after{
+  content:"";position:fixed;inset:0;z-index:999;pointer-events:none;opacity:.12;mix-blend-mode:multiply;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.7' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.22'/%3E%3C/svg%3E");
+}
 h1,h2,h3,p{margin:0}
-h1,h2,h3{font-family:var(--title);line-height:.91;letter-spacing:-.035em}
-h1{font-size:clamp(3.2rem,7.2vw,6.8rem)}
-h2{font-size:clamp(2.6rem,5.2vw,5.1rem)}
-h3{font-size:clamp(1.7rem,3vw,2.8rem)}
-p{font-size:clamp(1rem,1.45vw,1.28rem);line-height:1.5}
-.kicker,.hand{font-family:var(--transition)}
-.kicker{font-size:clamp(.9rem,1.1vw,1.05rem);font-weight:900;text-transform:uppercase;letter-spacing:.06em}
-.hand{font-size:clamp(1.7rem,3.8vw,4.3rem);line-height:1.05}
-.progress-ui{position:fixed;z-index:90;top:18px;left:50%;transform:translateX(-50%);width:min(920px,92vw);display:flex;align-items:center;gap:12px;padding:10px 14px;border:2px solid var(--forest);border-radius:999px;background:rgba(255,242,180,.7);backdrop-filter:blur(14px);box-shadow:0 8px 0 rgba(21,55,13,.12)}
-.progress-ui b{font-family:var(--transition);font-size:.9rem;white-space:nowrap}
-.track{height:9px;flex:1;border:1.5px solid var(--forest);border-radius:99px;overflow:hidden}.track i{display:block;width:0;height:100%;background:var(--sage)}
-.counter{font-weight:900;font-size:.85rem}
-.chapter{position:relative;height:260vh}
-.chapter.short{height:210vh}
-.sticky{position:sticky;top:0;height:100svh;overflow:hidden;display:grid;place-items:center}
-.inner{width:min(1280px,92vw);height:100%;position:relative;z-index:5}
-.panel{position:absolute;inset:0}
-.hero .sticky{background:var(--forest);color:var(--cream)}
-.hero-copy{position:absolute;left:4vw;top:18vh;width:min(900px,82vw);z-index:10}
-.hero-copy p{margin-top:1.5rem;max-width:31ch;color:var(--cream)}
-.hero-word{display:inline-block;transform-origin:50% 70%}
-.scroll-note{position:absolute;left:4vw;bottom:8vh;display:flex;gap:13px;align-items:center;font-weight:900}.scroll-note i{width:52px;height:52px;border:2px solid;border-radius:50%;display:grid;place-items:center}
-.blob{position:absolute;border:3px solid var(--forest);box-shadow:10px 12px 0 rgba(21,55,13,.14)}
-.hero .blob{border-color:var(--cream)}
-.b1{width:170px;height:135px;background:var(--gold);border-radius:55% 45% 62% 38%;right:7vw;top:18vh;display:grid;place-items:center;color:var(--forest);font:4rem var(--title)}
-.b2{width:140px;height:140px;background:var(--gold);border-radius:50%;right:28vw;bottom:12vh;display:grid;place-items:center;color:var(--forest);font:3.2rem var(--title)}
-.b3{width:110px;height:95px;background:var(--sage);border-radius:44% 56% 47% 53%;right:18vw;top:52vh;display:grid;place-items:center;color:var(--forest);font:2.8rem var(--title)}
-.ring{position:absolute;width:min(82vw,980px);aspect-ratio:1;border:3px dashed var(--gold);border-radius:50%;right:-28vw;bottom:-43vw}
-.wipe-disc{position:absolute;width:20vmax;height:20vmax;border-radius:50%;background:var(--cream);left:50%;top:50%;transform:translate(-50%,-50%) scale(.01);z-index:4}
-.chapter.population .sticky{background:var(--cream)}
-.scene-title{position:absolute;left:4vw;top:12vh;width:min(650px,82vw);z-index:20}
-.scene-title .kicker{margin-bottom:1rem}.scene-title p{margin-top:1.3rem;max-width:28ch}
-.people-field{position:absolute;right:3vw;top:12vh;width:min(54vw,720px);height:72vh}
-.person{position:absolute;width:54px;height:54px;border-radius:50%;background:var(--sage);border:2.5px solid var(--forest);box-shadow:5px 6px 0 rgba(21,55,13,.12)}
-.person.sampled{background:var(--sage)}
-.sample-lasso{position:absolute;border:5px dashed var(--forest);border-radius:48% 52% 45% 55%;width:45%;height:46%;right:4%;bottom:6%;transform:scale(.1) rotate(-15deg);opacity:0}
-.sample-tag{position:absolute;right:4vw;bottom:7vh;background:var(--gold);border:2px solid var(--forest);border-radius:22px;padding:1rem 1.3rem;font:1.25rem var(--transition);font-weight:900;box-shadow:7px 8px 0 var(--forest);opacity:0;filter:blur(12px)}
-.bridge{position:absolute;left:50%;bottom:6vh;transform:translateX(-50%);font:clamp(2rem,4.4vw,4.8rem)/1.02 var(--transition);text-align:center;width:min(900px,88vw);opacity:0}
-.chapter.parameters .sticky{background:var(--forest);color:var(--cream)}
-.cards-stage{position:absolute;inset:0}
-.big-card{position:absolute;width:min(560px,70vw);min-height:56vh;border:3px solid var(--cream);border-radius:50px;padding:clamp(2rem,4vw,4rem);box-shadow:14px 16px 0 rgba(21,55,13,.28)}
-.big-card.left{left:7vw;top:20vh;background:var(--cream);color:var(--forest);transform:translateX(-110vw) rotate(-14deg)}
-.big-card.right{right:7vw;top:20vh;background:var(--gold);color:var(--forest);transform:translateX(110vw) rotate(14deg)}
-.big-card .symbol{font:clamp(6rem,11vw,10rem)/.9 var(--title)}
-.center-rule{position:absolute;left:50%;top:73vh;transform:translate(-50%,80px);opacity:0;background:var(--cream);color:var(--forest);border:3px solid var(--forest);border-radius:999px;padding:1rem 1.6rem;font:clamp(1.15rem,2vw,1.6rem) var(--transition);font-weight:900;white-space:nowrap}
-.chapter.estimate .sticky{background:var(--cream)}
-.est-copy{position:absolute;left:4vw;top:15vh;width:min(600px,85vw);z-index:10}.est-copy p{margin-top:1.4rem;max-width:29ch}
-.apple-world{position:absolute;right:2vw;top:5vh;width:min(58vw,760px);height:86vh}
-.apple{position:absolute;width:105px;height:88px;border-radius:48% 52% 50% 50%;background:var(--sage);border:3px solid var(--forest);box-shadow:6px 8px 0 rgba(21,55,13,.16)}
-.apple:before{content:"";position:absolute;width:11px;height:28px;background:var(--forest);border-radius:9px;left:48%;top:-18px;transform:rotate(10deg)}
-.apple:after{content:"";position:absolute;width:34px;height:18px;background:var(--sage);border:2px solid var(--forest);border-radius:100% 0 100% 0;left:57%;top:-15px;transform:rotate(-17deg)}
-.scale{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%) scale(.25) rotate(-8deg);width:300px;height:220px;background:var(--gold);border:3px solid var(--forest);border-radius:55px 55px 32px 32px;box-shadow:12px 14px 0 var(--forest);display:grid;place-items:center;text-align:center}
-.scale strong{font:3.5rem var(--title)}.scale small{font:1.2rem var(--transition)}
-.number-pop{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%) scale(.1);font:clamp(5rem,12vw,12rem)/1 var(--title);color:var(--forest);opacity:0;z-index:14}
-.chapter.confidence .sticky{background:var(--gold)}
-.ci-copy{position:absolute;left:4vw;top:10vh;width:min(690px,88vw);z-index:10}.ci-copy p{margin-top:1.2rem;max-width:31ch}
-.ci-stage{position:absolute;left:5vw;right:5vw;bottom:8vh;height:50vh}
-.axis{position:absolute;left:6%;right:6%;top:52%;height:6px;border-radius:20px;background:var(--forest);transform:scaleX(.02);transform-origin:left}
-.range{position:absolute;left:28%;right:28%;top:45%;height:68px;border:3px solid var(--forest);background:var(--gold);border-radius:999px;transform:scaleX(.01);opacity:0}
-.range:before,.range:after{content:"";position:absolute;top:-18px;width:6px;height:98px;background:var(--forest);border-radius:9px}.range:before{left:0}.range:after{right:0}
-.dot-est{position:absolute;left:50%;top:38%;transform:translateX(-50%) scale(.1);width:96px;height:96px;border-radius:50%;background:var(--sage);border:3px solid var(--forest);display:grid;place-items:center;font:2rem var(--title);opacity:0}
-.tick{position:absolute;top:64%;font:1.25rem var(--transition);font-weight:900;opacity:0}.t1{left:26%}.t2{left:48%}.t3{right:25%}
-.rain{position:absolute;inset:0;pointer-events:none}
-.rain i{position:absolute;width:6px;height:0;background:var(--sage);border-radius:9px;bottom:3%;transform-origin:bottom}
-.rain i:before,.rain i:after{content:"";position:absolute;left:-10px;width:26px;height:5px;background:inherit;border-radius:8px}.rain i:before{top:0}.rain i:after{bottom:0}
-.rain i.miss{background:var(--sage)}
-.chapter.hypothesis .sticky{background:var(--gold)}
-.hypo-title{position:absolute;left:4vw;top:11vh;width:min(700px,90vw)}
-.h0,.h1{position:absolute;top:37vh;width:min(390px,42vw);min-height:36vh;border:3px solid var(--forest);border-radius:48px;padding:2.1rem;box-shadow:11px 13px 0 var(--forest)}
-.h0{left:8vw;background:var(--cream);transform:translateX(-80vw) rotate(-12deg)}
-.h1{right:8vw;background:var(--sage);transform:translateX(80vw) rotate(12deg)}
-.h0 b,.h1 b{display:block;font:clamp(4rem,8vw,7rem) var(--title)}
-.vs{position:absolute;left:50%;top:53%;transform:translate(-50%,-50%) scale(.1) rotate(-30deg);font:clamp(3rem,7vw,7rem) var(--title);color:var(--forest);opacity:0}
-.verdict{position:absolute;left:50%;bottom:5vh;transform:translate(-50%,70px);opacity:0;width:min(900px,90vw);text-align:center;font:clamp(2rem,4.5vw,4.5rem)/1.04 var(--transition)}
-.chapter.pvalue .sticky{background:var(--cream)}
-.p-copy{position:absolute;left:4vw;top:10vh;width:min(650px,90vw)}
-.bell{position:absolute;left:50%;bottom:5vh;transform:translateX(-50%);width:min(940px,90vw);height:52vh;border:3px solid var(--forest);border-radius:50px;background:var(--cream);box-shadow:13px 15px 0 var(--forest);overflow:hidden}
+h1,h2,h3{font-family:var(--title);line-height:.94;letter-spacing:-.025em}
+h1{font-size:clamp(3.25rem,6.7vw,6.5rem)}
+h2{font-size:clamp(2.35rem,4.5vw,4.5rem)}
+h3{font-size:clamp(1.4rem,2.4vw,2.3rem)}
+p{font-size:clamp(1rem,1.35vw,1.22rem);line-height:1.52}
+strong{font-weight:900}
+.kicker{
+  font-family:var(--transition);font-size:clamp(.78rem,1vw,.95rem);font-weight:900;
+  letter-spacing:.1em;text-transform:uppercase;margin-bottom:.85rem;
+}
+.subline{
+  font-family:var(--transition);font-size:clamp(1.18rem,2vw,1.8rem);line-height:1.12;margin-top:1.15rem;
+}
+.progress-ui{
+  position:fixed;z-index:100;top:14px;left:50%;transform:translateX(-50%);
+  width:min(900px,92vw);display:flex;align-items:center;gap:12px;padding:9px 13px;
+  border:2px solid var(--forest);border-radius:999px;background:rgba(255,242,180,.9);
+  backdrop-filter:blur(12px);box-shadow:0 6px 0 rgba(21,55,13,.12);
+}
+.progress-ui b{font:800 .78rem var(--transition);white-space:nowrap}
+.track{height:8px;flex:1;border:1.5px solid var(--forest);border-radius:99px;overflow:hidden}
+.track i{display:block;height:100%;width:0;background:var(--sage)}
+.counter{font-size:.78rem;font-weight:900;min-width:58px;text-align:right}
+
+.chapter{position:relative;height:220vh}
+.chapter.long{height:250vh}
+.chapter.short{height:180vh}
+.sticky{
+  position:sticky;top:0;height:100svh;overflow:hidden;background:var(--cream);
+}
+.layout{
+  width:min(1240px,92vw);height:100%;margin:0 auto;
+  display:grid;grid-template-columns:minmax(0,.88fr) minmax(0,1.12fr);
+  gap:clamp(2rem,5vw,6rem);align-items:center;padding:8vh 0 5vh;
+}
+.copy{
+  min-width:0;align-self:center;z-index:5;
+}
+.copy p{max-width:34ch;margin-top:1rem}
+.copy .tiny{font-size:.92rem;opacity:.82}
+.stage{
+  position:relative;min-width:0;width:100%;height:min(66vh,660px);
+  border:2.5px solid var(--forest);border-radius:38px;overflow:hidden;
+  background:rgba(229,205,130,.22);box-shadow:10px 12px 0 rgba(21,55,13,.13);
+}
+.stage.no-frame{border:0;box-shadow:none;background:transparent}
+.callout{
+  position:absolute;z-index:20;max-width:220px;padding:.75rem .9rem;border:2px solid var(--forest);
+  border-radius:18px;background:rgba(255,242,180,.92);backdrop-filter:blur(12px);
+  font:800 .9rem/1.25 var(--transition);opacity:0;filter:blur(12px);transform:translateY(16px);
+  transition:opacity .55s ease,filter .55s ease,transform .55s ease;
+}
+.callout.show{opacity:1;filter:blur(0);transform:none}
+.badge{
+  display:inline-block;margin-top:1rem;padding:.55rem .85rem;border:2px solid var(--forest);
+  border-radius:999px;background:var(--gold);font:800 .9rem var(--transition);
+}
+
+/* hero */
+.hero-grid{grid-template-columns:minmax(0,1fr) minmax(340px,.9fr)}
+.hero-stage{height:min(68vh,680px)}
+.hero-symbol{
+  position:absolute;display:grid;place-items:center;border:2.5px solid var(--forest);
+  background:var(--gold);font-family:var(--title);color:var(--forest);box-shadow:8px 9px 0 rgba(21,55,13,.12)
+}
+.hs1{width:150px;height:120px;border-radius:42% 58% 51% 49%;left:10%;top:15%;font-size:3.5rem}
+.hs2{width:125px;height:125px;border-radius:50%;right:12%;top:30%;font-size:3rem}
+.hs3{width:115px;height:92px;border-radius:55% 45% 60% 40%;left:33%;bottom:13%;font-size:2.7rem}
+.orbit{position:absolute;width:72%;aspect-ratio:1;border:3px dashed var(--sage);border-radius:50%;left:14%;top:9%}
+.wipe{position:absolute;width:120px;height:120px;border-radius:50%;background:var(--cream);left:50%;top:50%;transform:translate(-50%,-50%) scale(.05)}
+.scroll-cue{margin-top:1.5rem;font:900 .95rem var(--transition);display:flex;align-items:center;gap:.65rem}
+.scroll-cue i{width:42px;height:42px;border:2px solid var(--forest);border-radius:50%;display:grid;place-items:center}
+
+/* population */
+.people{position:absolute;inset:8%}
+.person{
+  position:absolute;width:34px;height:34px;border-radius:50%;background:var(--sage);
+  border:2px solid var(--forest);box-shadow:4px 5px 0 rgba(21,55,13,.1)
+}
+.person.sampled{background:var(--gold)}
+.lasso{position:absolute;width:43%;height:34%;right:7%;bottom:8%;border:4px dashed var(--forest);border-radius:48% 52% 44% 56%;opacity:0;transform:scale(.25)}
+.population .callout{right:5%;bottom:5%}
+
+/* parameter/statistic */
+.dual{position:absolute;inset:7%;display:grid;grid-template-columns:1fr 1fr;gap:5%}
+.stat-card{
+  min-width:0;border:2.5px solid var(--forest);border-radius:30px;padding:clamp(1.1rem,2vw,1.7rem);
+  background:var(--cream);box-shadow:7px 8px 0 rgba(21,55,13,.14);
+  align-self:center;
+}
+.stat-card.gold{background:var(--gold)}
+.stat-card .symbol{font:clamp(3.2rem,6vw,5.8rem)/1 var(--title);margin:.45rem 0 .8rem}
+.stat-card p{font-size:1rem}
+.rule-chip{position:absolute;left:50%;bottom:5%;transform:translateX(-50%);white-space:nowrap;padding:.6rem .85rem;border:2px solid var(--forest);border-radius:999px;background:var(--cream);font:800 .82rem var(--transition);opacity:0}
+
+/* sampling distribution */
+.sample-dots{position:absolute;inset:5% 52% 5% 5%}
+.mini-sample{position:absolute;width:74px;height:74px;border:2px solid var(--forest);border-radius:20px;background:var(--cream)}
+.mini-sample i{position:absolute;width:10px;height:10px;border-radius:50%;background:var(--sage);border:1px solid var(--forest)}
+.mean-stack{position:absolute;right:6%;top:8%;bottom:8%;width:42%}
+.mean-axis{position:absolute;left:10%;right:10%;bottom:15%;height:4px;background:var(--forest);border-radius:8px}
+.mean-dot{position:absolute;width:17px;height:17px;border-radius:50%;background:var(--gold);border:2px solid var(--forest);opacity:0}
+.sampling .callout{right:6%;top:7%}
+
+/* estimation */
+.estimator-line{position:absolute;left:8%;right:8%;top:50%;height:5px;background:var(--forest);border-radius:8px;transform:scaleX(.02);transform-origin:left}
+.truth{position:absolute;left:70%;top:26%;bottom:18%;width:4px;background:var(--forest);opacity:.5}
+.truth-label{position:absolute;left:70%;top:16%;transform:translateX(-50%);font:900 .9rem var(--transition)}
+.estimate-dot{position:absolute;left:20%;top:42%;width:70px;height:70px;border-radius:50%;background:var(--gold);border:2.5px solid var(--forest);display:grid;place-items:center;font:1.7rem var(--title)}
+.se-band{position:absolute;left:15%;right:15%;top:39%;height:95px;border:2.5px solid var(--sage);border-radius:999px;opacity:0;transform:scaleX(.05)}
+.se-label{position:absolute;left:50%;top:63%;transform:translateX(-50%);font:900 .88rem var(--transition);opacity:0}
+
+/* CI */
+.ci-axis{position:absolute;left:8%;right:8%;top:48%;height:5px;background:var(--forest);transform:scaleX(.02);transform-origin:left}
+.ci-range{position:absolute;left:23%;right:23%;top:40%;height:60px;background:var(--gold);border:2.5px solid var(--forest);border-radius:999px;transform:scaleX(.02);opacity:0}
+.ci-point{position:absolute;left:50%;top:35%;transform:translateX(-50%) scale(.1);width:74px;height:74px;border-radius:50%;background:var(--sage);border:2.5px solid var(--forest);display:grid;place-items:center;font:1.6rem var(--title);opacity:0}
+.ci-tick{position:absolute;top:58%;font:900 .9rem var(--transition);opacity:0}
+.ci-t1{left:21%}.ci-t2{left:48%}.ci-t3{right:20%}
+.interval-rain{position:absolute;left:8%;right:8%;bottom:6%;height:28%}
+.interval-rain i{position:absolute;bottom:0;width:4px;background:var(--sage);border-radius:8px;transform-origin:bottom;opacity:0}
+.interval-rain i:before,.interval-rain i:after{content:"";position:absolute;left:-8px;width:20px;height:4px;background:inherit;border-radius:8px}
+.interval-rain i:before{top:0}.interval-rain i:after{bottom:0}
+.interval-rain i.miss{background:var(--forest)}
+
+/* hypotheses */
+.hypo-grid{position:absolute;inset:8%;display:grid;grid-template-columns:1fr 1fr;gap:5%;align-items:center}
+.hypo-card{border:2.5px solid var(--forest);border-radius:30px;padding:1.5rem;background:var(--cream);box-shadow:7px 8px 0 rgba(21,55,13,.13)}
+.hypo-card.alt{background:var(--sage)}
+.hypo-card b{display:block;font:clamp(3rem,6vw,5.6rem) var(--title)}
+.vs{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%) scale(.1);font:clamp(2rem,4vw,3.7rem) var(--title);background:var(--gold);border:2px solid var(--forest);border-radius:50%;width:88px;height:88px;display:grid;place-items:center;opacity:0}
+.hypothesis .callout{left:50%;bottom:4%;transform:translateX(-50%) translateY(16px);max-width:340px;text-align:center}
+.hypothesis .callout.show{transform:translateX(-50%)}
+
+/* pvalue */
 .bell svg{width:100%;height:100%}
-.curve-path{stroke-dasharray:1300;stroke-dashoffset:1300}
+.bell{position:absolute;inset:4%}
+.curve{stroke-dasharray:1300;stroke-dashoffset:1300}
 .tail{opacity:0}
-.marker{transform:translateX(220px);opacity:0}
-.pbubble{position:absolute;right:4%;top:8%;width:190px;height:190px;border-radius:50%;background:var(--forest);color:var(--cream);border:3px solid var(--forest);display:grid;place-items:center;text-align:center;font:1.15rem var(--transition);transform:scale(.1) rotate(15deg);opacity:0}
-.decision-card{position:absolute;bottom:6%;width:min(330px,38vw);padding:1.4rem;border:3px solid var(--forest);border-radius:30px;background:var(--gold);opacity:0;filter:blur(14px)}
-.decision-card.left{left:5%}.decision-card.right{right:5%;background:var(--cream)}
-.decision-card strong{font:2.7rem var(--title)}
-.chapter.final .sticky{background:var(--forest);color:var(--cream)}
-.final-center{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%) scale(.8);width:min(1100px,92vw);text-align:center;opacity:0}
-.flow{display:flex;flex-wrap:wrap;justify-content:center;gap:.75rem;margin:2rem auto;max-width:950px}.flow span{padding:.7rem 1.1rem;border:2px solid var(--cream);border-radius:999px;background:var(--cream);color:var(--forest);font:1.15rem var(--transition);font-weight:900}
-.pop-note{position:absolute;z-index:40;padding:.8rem 1rem;border:2px solid var(--forest);border-radius:20px;background:rgba(255,242,180,.78);backdrop-filter:blur(14px);font:1.05rem var(--transition);font-weight:900;opacity:0;filter:blur(14px);transform:translateY(20px) rotate(-2deg);transition:.65s ease}
-.pop-note.show{opacity:1;filter:blur(0);transform:translateY(0) rotate(-2deg)}
-.note-a{right:6vw;top:12vh}.note-b{left:50%;bottom:3vh;transform:translate(-50%,20px)}
-@media(max-width:800px){
-  .chapter{height:230vh}.inner{width:94vw}.progress-ui b{display:none}
-  .scene-title,.est-copy,.ci-copy,.hypo-title,.p-copy{left:5vw;top:11vh;width:88vw}
-  .people-field{left:5vw;right:auto;top:44vh;width:90vw;height:48vh}
-  .person{width:40px;height:40px}.bridge{font-size:2rem}
-  .big-card{width:80vw;min-height:37vh;padding:1.5rem}.big-card.left{left:10vw;top:19vh}.big-card.right{right:10vw;top:53vh}
-  .center-rule{top:88vh;font-size:.9rem}
-  .apple-world{left:0;right:0;top:45vh;width:100%;height:50vh}.apple{width:72px;height:62px}.scale{width:220px;height:160px}.scale strong{font-size:2.6rem}
-  .ci-stage{left:1vw;right:1vw;height:46vh;bottom:4vh}.rain{opacity:.8}
-  .h0,.h1{width:40vw;top:45vh;padding:1rem;min-height:31vh}.h0{left:4vw}.h1{right:4vw}.verdict{font-size:2rem}
-  .bell{height:48vh;bottom:3vh}.pbubble{width:130px;height:130px;font-size:.9rem}.decision-card{width:42vw;padding:.8rem}.decision-card p{font-size:.95rem}.decision-card strong{font-size:1.8rem}
+.marker{opacity:0;transform:translateX(160px)}
+.p-chip{position:absolute;right:5%;top:7%;width:130px;height:130px;border-radius:50%;background:var(--gold);border:2.5px solid var(--forest);display:grid;place-items:center;text-align:center;font:900 .85rem/1.15 var(--transition);opacity:0;transform:scale(.1)}
+.pvalue .callout{left:5%;bottom:5%;max-width:260px}
+
+/* errors/power */
+.matrix{position:absolute;inset:7%;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:auto 1fr 1fr;gap:10px}
+.matrix .head{font:900 .8rem var(--transition);display:grid;place-items:center}
+.cell{border:2px solid var(--forest);border-radius:22px;padding:1rem;background:var(--cream);display:flex;flex-direction:column;justify-content:center}
+.cell.em{background:var(--gold)}
+.cell.sage{background:var(--sage)}
+.cell strong{font:1.45rem var(--title);margin-bottom:.4rem}
+.cell p{font-size:.9rem}
+.power-meter{position:absolute;left:8%;right:8%;bottom:5%;height:18px;border:2px solid var(--forest);border-radius:999px;overflow:hidden;background:var(--cream)}
+.power-meter i{display:block;height:100%;width:0;background:var(--sage)}
+
+/* likelihood */
+.likelihood svg{width:100%;height:100%}
+.like-curve{stroke-dasharray:1000;stroke-dashoffset:1000}
+.mle-line{opacity:0}
+.mle-dot{opacity:0;transform:scale(.2);transform-origin:center}
+.like-tag{position:absolute;right:7%;top:9%;padding:.65rem .85rem;border:2px solid var(--forest);border-radius:18px;background:var(--gold);font:900 .88rem var(--transition);opacity:0}
+
+/* bayes */
+.bayes-flow{position:absolute;inset:8%;display:grid;grid-template-columns:1fr auto 1fr auto 1fr;gap:12px;align-items:center}
+.bayes-box{border:2.5px solid var(--forest);border-radius:26px;padding:1.3rem;text-align:center;background:var(--cream);min-width:0}
+.bayes-box.gold{background:var(--gold)}.bayes-box.sage{background:var(--sage)}
+.bayes-box strong{display:block;font:1.6rem var(--title);margin-bottom:.45rem}
+.arrow{font:2.2rem var(--title)}
+.bayes-note{position:absolute;left:50%;bottom:7%;transform:translateX(-50%);width:84%;text-align:center;font:900 .9rem var(--transition)}
+.final-flow{display:flex;flex-wrap:wrap;gap:.65rem;margin-top:1.5rem}
+.final-flow span{padding:.55rem .8rem;border:2px solid var(--forest);border-radius:999px;background:var(--gold);font:800 .85rem var(--transition)}
+
+@media(max-width:900px){
+  .chapter{height:205vh}.chapter.long{height:225vh}.chapter.short{height:170vh}
+  .layout{grid-template-columns:1fr;grid-template-rows:auto 1fr;gap:1.2rem;padding:10vh 0 4vh}
+  .copy{align-self:start}
+  .copy p{max-width:58ch}
+  h1{font-size:clamp(2.7rem,10vw,4.5rem)}h2{font-size:clamp(2.05rem,8vw,3.4rem)}
+  p{font-size:.98rem}
+  .stage{height:48vh;min-height:340px;border-radius:28px}
+  .hero-grid{grid-template-columns:1fr;grid-template-rows:auto 1fr}
+  .hero-stage{height:45vh}
+  .hero-symbol{scale:.75}.hs1{left:7%;top:12%}.hs2{right:8%;top:25%}.hs3{left:39%;bottom:8%}
+  .person{width:25px;height:25px}
+  .dual,.hypo-grid{inset:5%;gap:3%}
+  .stat-card,.hypo-card{padding:1rem}.stat-card p,.hypo-card p{font-size:.85rem}
+  .stat-card .symbol{font-size:3rem}.hypo-card b{font-size:3.1rem}
+  .rule-chip{max-width:88%;white-space:normal;text-align:center;font-size:.72rem}
+  .mini-sample{width:58px;height:58px}
+  .bayes-flow{inset:6%;grid-template-columns:1fr;grid-template-rows:auto auto auto auto auto;gap:7px}
+  .arrow{transform:rotate(90deg);font-size:1.6rem}
+  .bayes-box{padding:.75rem}.bayes-box strong{font-size:1.2rem}.bayes-box p{font-size:.78rem}
+  .bayes-note{font-size:.75rem}
+}
+@media(max-width:560px){
+  .progress-ui b{display:none}
+  .stage{height:46vh;min-height:315px}
+  .person{width:21px;height:21px}
+  .dual{grid-template-columns:1fr 1fr}.stat-card{padding:.75rem}
+  .stat-card h3{font-size:1.3rem}.stat-card p{font-size:.75rem}.stat-card .symbol{font-size:2.5rem}
+  .hypo-card h3{font-size:1.25rem}.hypo-card p{font-size:.73rem}.hypo-card b{font-size:2.5rem}
+  .vs{width:58px;height:58px;font-size:1.5rem}
+  .matrix{inset:4%;gap:6px}.cell{padding:.65rem}.cell strong{font-size:1.15rem}.cell p{font-size:.72rem}
+  .p-chip{width:92px;height:92px;font-size:.68rem}
 }
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
 </style>
 </head>
 <body>
-<nav class="progress-ui"><b>INFERENCE / IN MOTION</b><div class="track"><i id="globalBar"></i></div><span class="counter" id="count">01 / 06</span></nav>
+<nav class="progress-ui">
+  <b>INFERENCE / IN MOTION</b>
+  <div class="track"><i id="globalBar"></i></div>
+  <span class="counter" id="counter">01 / 10</span>
+</nav>
+
 <main>
 <section class="chapter hero short" data-step="1">
   <div class="sticky">
-    <div class="wipe-disc" data-hero-wipe></div>
-    <div class="ring" data-ring></div>
-    <div class="blob b1" data-hero-float="1">x̄</div>
-    <div class="blob b2" data-hero-float="2">μ</div>
-    <div class="blob b3" data-hero-float="3">p̂</div>
-    <div class="inner">
-      <div class="hero-copy">
+    <div class="layout hero-grid">
+      <div class="copy">
         <div class="kicker">small data → bigger claims</div>
-        <h1><span class="hero-word">How</span> <span class="hero-word">do we</span><br><span class="hero-word">learn about</span><br><span class="hero-word">everyone?</span></h1>
-        <p>Scroll. The sample will literally separate from the population, become a statistic, turn into an estimate, grow an interval, and finally face a hypothesis test.</p>
+        <h1>How can a sample teach us about a population?</h1>
+        <p>Scroll through the logic of statistical inference. Each chapter changes the graphic as you move, while the text stays in its own readable space.</p>
+        <div class="scroll-cue"><i>↓</i><span>move the story</span></div>
       </div>
-      <div class="scroll-note"><i>↓</i><span>move the story</span></div>
+      <div class="stage no-frame hero-stage">
+        <div class="orbit"></div>
+        <div class="hero-symbol hs1">x̄</div>
+        <div class="hero-symbol hs2">μ</div>
+        <div class="hero-symbol hs3">p̂</div>
+        <div class="wipe"></div>
+      </div>
     </div>
   </div>
 </section>
 
 <section class="chapter population" data-step="1">
   <div class="sticky">
-    <div class="inner">
-      <div class="scene-title">
-        <div class="kicker">01 — WHO ARE WE TALKING ABOUT?</div>
-        <h2>Population<br>vs. Sample</h2>
-        <p>The population is the complete group we care about. The sample is the smaller subgroup we actually observe.</p>
+    <div class="layout">
+      <div class="copy">
+        <div class="kicker">01 — population vs. sample</div>
+        <h2>We rarely observe everyone.</h2>
+        <p>The <strong>population</strong> is the complete group we care about. The <strong>sample</strong> is the smaller subgroup we actually observe and measure.</p>
+        <div class="subline">Inference begins when a sample stands in for a population.</div>
       </div>
-      <div class="people-field" id="people"></div>
-      <div class="sample-lasso"></div>
-      <div class="sample-tag pop-note">this smaller group is what we can actually measure</div>
-      <div class="bridge">We measure a few<br>→ to learn about many.</div>
+      <div class="stage">
+        <div class="people" id="people"></div>
+        <div class="lasso"></div>
+        <div class="callout">the highlighted observations become the sample</div>
+      </div>
     </div>
   </div>
 </section>
 
 <section class="chapter parameters" data-step="2">
   <div class="sticky">
-    <div class="inner cards-stage">
-      <article class="big-card left"><div class="kicker">population</div><div class="symbol">μ / p</div><h3>Parameter</h3><p>A fixed, usually unknown numerical value describing the entire population.</p></article>
-      <article class="big-card right"><div class="kicker">sample</div><div class="symbol">x̄ / p̂</div><h3>Statistic</h3><p>A known numerical value calculated from sample data and used to estimate the parameter.</p></article>
-      <div class="center-rule">Population ↔ Parameter &nbsp; · &nbsp; Sample ↔ Statistic</div>
-    </div>
-  </div>
-</section>
-
-<section class="chapter estimate" data-step="3">
-  <div class="sticky">
-    <div class="inner">
-      <div class="est-copy"><div class="kicker">03 — MAKE A BEST GUESS</div><h2>Point<br>Estimation</h2><p>A point estimate is one number computed from the sample and used as our best guess for an unknown population parameter.</p><p style="margin-top:1rem">In the PDF example, a sample of 50 apples has average weight <b>150 g</b>.</p></div>
-      <div class="apple-world">
-        <div class="apple"></div><div class="apple"></div><div class="apple"></div><div class="apple"></div><div class="apple"></div><div class="apple"></div>
-        <div class="scale"><div><strong>x̄ = 150g</strong><small>the sample mean</small></div></div>
+    <div class="layout">
+      <div class="copy">
+        <div class="kicker">02 — parameters vs. statistics</div>
+        <h2>Unknown population. Known sample.</h2>
+        <p>A <strong>parameter</strong> is a fixed, usually unknown number describing a population. A <strong>statistic</strong> is calculated from observed sample data.</p>
+        <div class="badge">Population ↔ Parameter · Sample ↔ Statistic</div>
       </div>
-      <div class="number-pop">150g</div>
-      <div class="pop-note note-a">one number becomes our “best guess” for μ</div>
-    </div>
-  </div>
-</section>
-
-<section class="chapter confidence" data-step="4">
-  <div class="sticky">
-    <div class="inner">
-      <div class="ci-copy"><div class="kicker">04 — ADMIT THE UNCERTAINTY</div><h2>Confidence<br>Intervals</h2><p>A point estimate is imperfect, so we give a range of plausible values: point estimate ± margin of error.</p></div>
-      <div class="ci-stage">
-        <div class="axis"></div><div class="range"></div><div class="dot-est">x̄</div>
-        <span class="tick t1">145 g</span><span class="tick t2">150 g</span><span class="tick t3">155 g</span>
-        <div class="rain" id="rain"></div>
+      <div class="stage">
+        <div class="dual">
+          <article class="stat-card param-card"><div class="kicker">population</div><div class="symbol">μ / p</div><h3>Parameter</h3><p>What we want to know.</p></article>
+          <article class="stat-card gold statistic-card"><div class="kicker">sample</div><div class="symbol">x̄ / p̂</div><h3>Statistic</h3><p>What we can calculate.</p></article>
+        </div>
+        <div class="rule-chip">use a statistic to learn about a parameter</div>
       </div>
-      <div class="pop-note note-a">95% confidence describes the long-run performance of the method</div>
     </div>
   </div>
 </section>
 
-<section class="chapter hypothesis" data-step="5">
+<section class="chapter sampling long" data-step="3">
   <div class="sticky">
-    <div class="inner">
-      <div class="hypo-title"><div class="kicker">05 — PUT A CLAIM ON TRIAL</div><h2>Hypothesis<br>Testing</h2><p>We compare two competing claims about the population using sample evidence.</p></div>
-      <article class="h0"><b>H₀</b><h3>Null</h3><p>The default or status quo — usually “no effect,” “no difference,” or “no change.”</p></article>
-      <div class="vs">VS</div>
-      <article class="h1"><b>H₁</b><h3>Alternative</h3><p>The claim we are trying to find evidence for.</p></article>
-      <div class="verdict">Would our sample look strange<br>if H₀ were actually true?</div>
+    <div class="layout">
+      <div class="copy">
+        <div class="kicker">03 — beyond the supplied guide</div>
+        <h2>Imagine repeating the sample again and again.</h2>
+        <p>Every random sample gives a slightly different statistic. The distribution of that statistic across repeated samples is its <strong>sampling distribution</strong>.</p>
+        <p class="tiny">This idea explains why standard errors, confidence intervals, and hypothesis tests work.</p>
+        <div class="subline">Samples vary. Statistics vary. Their variation is measurable.</div>
+      </div>
+      <div class="stage">
+        <div class="sample-dots" id="miniSamples"></div>
+        <div class="mean-stack" id="meanStack"><div class="mean-axis"></div></div>
+        <div class="callout">each sample produces one x̄</div>
+      </div>
     </div>
   </div>
 </section>
 
-<section class="chapter pvalue" data-step="6">
+<section class="chapter estimation" data-step="4">
   <div class="sticky">
-    <div class="inner">
-      <div class="p-copy"><div class="kicker">06 — HOW SURPRISING IS THE DATA?</div><h2>The<br>p-value</h2><p>The p-value is the probability of seeing our sample result — or something more extreme — if the null hypothesis were entirely true.</p></div>
-      <div class="bell">
-        <svg viewBox="0 0 900 430" preserveAspectRatio="none">
-          <path d="M50 355H850" stroke="#15370D" stroke-width="6" stroke-linecap="round"/>
-          <path class="curve-path" d="M80 355 C230 348 250 72 450 72 C650 72 670 348 820 355" fill="none" stroke="#15370D" stroke-width="9" stroke-linecap="round"/>
-          <path class="tail" d="M646 316 C696 344 747 352 820 355 L820 355 L646 355 Z" fill="#728E6D"/>
-          <g class="marker"><line x1="646" y1="316" x2="646" y2="365" stroke="#15370D" stroke-width="7" stroke-dasharray="12 9"/><circle cx="646" cy="316" r="13" fill="#15370D"/><text x="603" y="292" font-size="28" font-family="Trebuchet MS" fill="#15370D">our result</text></g>
+    <div class="layout">
+      <div class="copy">
+        <div class="kicker">04 — point estimate + standard error</div>
+        <h2>A best guess needs a measure of precision.</h2>
+        <p>A <strong>point estimate</strong> is one sample-based guess for an unknown parameter. The <strong>standard error</strong> measures how much that estimator would vary from sample to sample.</p>
+        <p class="tiny">For a sample mean, a common estimate is SE(x̄) = s / √n.</p>
+        <div class="subline">Larger n → smaller standard error → more precise estimates.</div>
+      </div>
+      <div class="stage">
+        <div class="estimator-line"></div>
+        <div class="truth"></div><div class="truth-label">true μ</div>
+        <div class="se-band"></div><div class="estimate-dot">x̄</div>
+        <div class="se-label">sampling uncertainty around the estimator</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="chapter confidence long" data-step="5">
+  <div class="sticky">
+    <div class="layout">
+      <div class="copy">
+        <div class="kicker">05 — confidence intervals</div>
+        <h2>Turn one estimate into a plausible range.</h2>
+        <p>A confidence interval combines a point estimate with a margin of error. In repeated sampling, a 95% procedure is designed so that about 95% of the intervals it creates contain the true parameter.</p>
+        <p class="tiny">The supplied guide illustrates 150 g with an interval from 145 g to 155 g.</p>
+      </div>
+      <div class="stage">
+        <div class="ci-axis"></div><div class="ci-range"></div><div class="ci-point">x̄</div>
+        <span class="ci-tick ci-t1">145</span><span class="ci-tick ci-t2">150</span><span class="ci-tick ci-t3">155</span>
+        <div class="interval-rain" id="intervalRain"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="chapter hypothesis" data-step="6">
+  <div class="sticky">
+    <div class="layout">
+      <div class="copy">
+        <div class="kicker">06 — hypothesis testing</div>
+        <h2>Put a population claim on trial.</h2>
+        <p><strong>H₀</strong> is the default or status-quo claim. <strong>H₁</strong> is the alternative claim we want evidence for.</p>
+        <div class="subline">Assume H₀. Then ask whether the sample looks unusually incompatible with it.</div>
+      </div>
+      <div class="stage">
+        <div class="hypo-grid">
+          <article class="hypo-card h0"><b>H₀</b><h3>Null</h3><p>No effect, no difference, no change.</p></article>
+          <article class="hypo-card alt h1"><b>H₁</b><h3>Alternative</h3><p>The competing scientific claim.</p></article>
+        </div>
+        <div class="vs">VS</div>
+        <div class="callout">the evidence comes from the sample, not from certainty</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="chapter pvalue long" data-step="7">
+  <div class="sticky">
+    <div class="layout">
+      <div class="copy">
+        <div class="kicker">07 — p-values</div>
+        <h2>How surprising is the sample under H₀?</h2>
+        <p>The p-value is the probability of obtaining the observed result, or something more extreme, <strong>assuming the null hypothesis is true</strong>.</p>
+        <p class="tiny">A small p-value means the observed result is difficult to reconcile with H₀. It is not the probability that H₀ itself is true.</p>
+      </div>
+      <div class="stage">
+        <div class="bell">
+          <svg viewBox="0 0 900 460" preserveAspectRatio="none" aria-label="null distribution and p-value tail">
+            <path d="M65 370H840" stroke="#15370D" stroke-width="6" stroke-linecap="round"/>
+            <path class="curve" d="M85 370 C220 360 260 90 450 90 C640 90 680 360 815 370" fill="none" stroke="#15370D" stroke-width="9" stroke-linecap="round"/>
+            <path class="tail" d="M650 327 C700 355 748 365 815 370 L815 370 L650 370 Z" fill="#728E6D"/>
+            <g class="marker"><line x1="650" y1="327" x2="650" y2="378" stroke="#15370D" stroke-width="6" stroke-dasharray="12 9"/><circle cx="650" cy="327" r="12" fill="#15370D"/></g>
+          </svg>
+        </div>
+        <div class="p-chip">tail area<br>= p-value idea</div>
+        <div class="callout">small p → stronger evidence against H₀</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="chapter errors long" data-step="8">
+  <div class="sticky">
+    <div class="layout">
+      <div class="copy">
+        <div class="kicker">08 — type I, type II, and power</div>
+        <h2>Every decision rule can make mistakes.</h2>
+        <p>A <strong>Type I error</strong> rejects a true H₀. A <strong>Type II error</strong> fails to reject a false H₀. Statistical <strong>power</strong> is the probability of correctly rejecting H₀ when a real effect exists.</p>
+        <p class="tiny">Power generally increases with larger effects, larger samples, lower variability, and—holding other things fixed—a less stringent significance threshold.</p>
+      </div>
+      <div class="stage">
+        <div class="matrix">
+          <div></div><div class="head">Reality</div>
+          <div class="cell"><strong>Correct</strong><p>Do not reject a true H₀.</p></div>
+          <div class="cell em"><strong>Type I error</strong><p>Reject a true H₀. Probability = α.</p></div>
+          <div class="cell em"><strong>Type II error</strong><p>Fail to reject a false H₀. Probability = β.</p></div>
+          <div class="cell sage"><strong>Power</strong><p>Reject a false H₀. Probability = 1 − β.</p></div>
+        </div>
+        <div class="power-meter"><i></i></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="chapter likelihood long" data-step="9">
+  <div class="sticky">
+    <div class="layout">
+      <div class="copy">
+        <div class="kicker">09 — likelihood and maximum likelihood</div>
+        <h2>Which parameter value makes the observed data most plausible?</h2>
+        <p>The <strong>likelihood function</strong> treats the observed data as fixed and compares how strongly different parameter values are supported by those data.</p>
+        <p>The <strong>maximum likelihood estimate (MLE)</strong> is the parameter value where the likelihood is highest.</p>
+        <div class="subline">Estimate by finding the peak of support.</div>
+      </div>
+      <div class="stage likelihood">
+        <svg viewBox="0 0 900 480" preserveAspectRatio="none" aria-label="likelihood curve with maximum">
+          <path d="M70 390H835" stroke="#15370D" stroke-width="6" stroke-linecap="round"/>
+          <path class="like-curve" d="M90 390 C180 375 260 320 330 220 C390 135 455 105 520 135 C600 172 640 285 810 390" fill="none" stroke="#728E6D" stroke-width="10" stroke-linecap="round"/>
+          <line class="mle-line" x1="470" y1="124" x2="470" y2="397" stroke="#15370D" stroke-width="5" stroke-dasharray="11 9"/>
+          <circle class="mle-dot" cx="470" cy="124" r="14" fill="#E5CD82" stroke="#15370D" stroke-width="4"/>
         </svg>
-        <div class="pbubble">this shaded tail<br>= this extreme<br>or more</div>
-        <article class="decision-card left"><strong>small p</strong><p>Typically &lt; 0.05 → reject H₀ in favor of H₁.</p></article>
-        <article class="decision-card right"><strong>large p</strong><p>Not enough evidence to reject H₀.</p></article>
+        <div class="like-tag">MLE = peak likelihood</div>
       </div>
     </div>
   </div>
 </section>
 
-<section class="chapter final short" data-step="6">
+<section class="chapter bayes long" data-step="10">
   <div class="sticky">
-    <div class="inner">
-      <div class="final-center"><div class="kicker">THE WHOLE LOGIC</div><h2>From a sample<br>to a careful conclusion.</h2><div class="flow"><span>Population</span><span>→ Sample</span><span>→ Statistic</span><span>→ Estimate</span><span>→ Uncertainty</span><span>→ Decision</span></div><p style="max-width:34ch;margin:0 auto">Inference is a structured way to learn from limited data while keeping uncertainty visible.</p></div>
+    <div class="layout">
+      <div class="copy">
+        <div class="kicker">10 — another inferential framework</div>
+        <h2>Bayesian inference updates uncertainty directly.</h2>
+        <p>A Bayesian analysis combines a <strong>prior</strong> distribution with the <strong>likelihood</strong> from the observed data to produce a <strong>posterior</strong> distribution.</p>
+        <p class="tiny">Frequentist and Bayesian inference answer uncertainty questions differently; neither is simply “confidence intervals versus probability.” They are distinct frameworks with different interpretations.</p>
+      </div>
+      <div class="stage">
+        <div class="bayes-flow">
+          <article class="bayes-box"><strong>Prior</strong><p>belief or information before the current data</p></article>
+          <div class="arrow">×</div>
+          <article class="bayes-box gold"><strong>Likelihood</strong><p>how the observed data support parameter values</p></article>
+          <div class="arrow">→</div>
+          <article class="bayes-box sage"><strong>Posterior</strong><p>updated uncertainty after seeing the data</p></article>
+        </div>
+        <div class="bayes-note">posterior ∝ prior × likelihood</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="chapter final short" data-step="10">
+  <div class="sticky">
+    <div class="layout">
+      <div class="copy">
+        <div class="kicker">the inference map</div>
+        <h2>From data to uncertainty-aware conclusions.</h2>
+        <p>The supplied guide gives the foundation: samples, parameters, point estimates, confidence intervals, hypotheses, and p-values. The later chapters extend that foundation into sampling distributions, precision, error rates, power, likelihood, and Bayesian updating.</p>
+        <div class="final-flow"><span>Sample</span><span>Statistic</span><span>Sampling distribution</span><span>SE</span><span>CI</span><span>Test</span><span>Power</span><span>Likelihood</span><span>Posterior</span></div>
+      </div>
+      <div class="stage no-frame">
+        <div class="orbit" style="width:68%;left:16%;top:12%"></div>
+        <div class="hero-symbol hs1">SE</div><div class="hero-symbol hs2">L(θ)</div><div class="hero-symbol hs3">π(θ|x)</div>
+      </div>
     </div>
   </div>
 </section>
 </main>
+
 <script>
 const clamp=(n,a=0,b=1)=>Math.max(a,Math.min(b,n));
 const lerp=(a,b,t)=>a+(b-a)*t;
 const ease=t=>t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;
 const chapters=[...document.querySelectorAll('.chapter')];
-const bar=document.getElementById('globalBar'), count=document.getElementById('count');
+const bar=document.getElementById('globalBar');
+const counter=document.getElementById('counter');
 
 const people=document.getElementById('people');
-const sampled=[7,13,18,25,31,38,42,47];
-for(let i=0;i<52;i++){
-  const d=document.createElement('i');d.className='person'+(sampled.includes(i)?' sampled':'');
-  const col=i%8,row=Math.floor(i/8);
-  d.style.left=(col*12.1+(row%2)*2.7)+'%'; d.style.top=(row*14.1+(col%3)*1.3)+'%';
-  d.dataset.x=0;d.dataset.y=0;people.appendChild(d);
-}
-const apples=[...document.querySelectorAll('.apple')];
-const applePos=[[7,19,-8],[35,6,7],[71,18,12],[16,68,-5],[50,72,8],[78,62,-10]];
-apples.forEach((a,i)=>{a.style.left=applePos[i][0]+'%';a.style.top=applePos[i][1]+'%';a.dataset.rot=applePos[i][2]});
-
-const rain=document.getElementById('rain');
-for(let i=0;i<12;i++){
-  const x=6+i*7.8; const h=28+(i%5)*8;
-  const el=document.createElement('i');el.style.left=x+'%';el.style.height=h+'%';el.className=(i===9?'miss':'');
-  rain.appendChild(el);
+const sampled=[6,13,19,28,35,42,48];
+for(let i=0;i<54;i++){
+  const d=document.createElement('i');
+  d.className='person'+(sampled.includes(i)?' sampled':'');
+  const c=i%9,r=Math.floor(i/9);
+  d.style.left=(c*10.8+(r%2)*2.1)+'%';
+  d.style.top=(r*16+(c%3)*1.2)+'%';
+  people.appendChild(d);
 }
 
-const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('show');else e.target.classList.remove('show')}),{threshold:.55});
-document.querySelectorAll('.pop-note').forEach(n=>io.observe(n));
+const miniSamples=document.getElementById('miniSamples');
+for(let s=0;s<6;s++){
+  const box=document.createElement('div');box.className='mini-sample';
+  box.style.left=(s%2)*48+'%';box.style.top=Math.floor(s/2)*31+'%';
+  for(let j=0;j<7;j++){
+    const dot=document.createElement('i');
+    dot.style.left=(12+(j%3)*23)+'%';dot.style.top=(12+Math.floor(j/3)*24)+'%';
+    box.appendChild(dot);
+  }
+  miniSamples.appendChild(box);
+}
 
-function localProgress(section){
+const meanStack=document.getElementById('meanStack');
+const meanXs=[18,28,38,45,49,52,56,61,68,74,43,58,64,35,50,54,47,59];
+meanXs.forEach((x,i)=>{
+  const d=document.createElement('i');d.className='mean-dot';
+  d.style.left=x+'%';d.style.bottom=(18+(i%5)*12)+'%';
+  meanStack.appendChild(d);
+});
+
+const rain=document.getElementById('intervalRain');
+for(let i=0;i<14;i++){
+  const d=document.createElement('i');d.className=i===11?'miss':'';
+  d.style.left=(4+i*7.1)+'%';d.style.height=(40+(i%4)*13)+'%';
+  rain.appendChild(d);
+}
+
+const io=new IntersectionObserver(entries=>{
+  entries.forEach(e=>e.target.classList.toggle('show',e.isIntersecting));
+},{threshold:.55});
+document.querySelectorAll('.callout').forEach(el=>io.observe(el));
+
+function progress(section){
   const r=section.getBoundingClientRect();
-  const scrollable=section.offsetHeight-innerHeight;
-  return clamp(-r.top/scrollable);
+  return clamp(-r.top/(section.offsetHeight-innerHeight));
 }
-function set(el,props){if(!el)return;Object.assign(el.style,props)}
-
 let ticking=false;
+
 function render(){
   ticking=false;
   const max=document.documentElement.scrollHeight-innerHeight;
-  const gp=max?scrollY/max:0;bar.style.width=(gp*100)+'%';
-  let active=1,best=99999;
-  chapters.forEach(ch=>{const d=Math.abs(ch.getBoundingClientRect().top);if(d<best){best=d;active=+ch.dataset.step||1}});
-  count.textContent=String(active).padStart(2,'0')+' / 06';
+  bar.style.width=((max?scrollY/max:0)*100)+'%';
+  let active=1,best=Infinity;
+  chapters.forEach(ch=>{
+    const d=Math.abs(ch.getBoundingClientRect().top);
+    if(d<best){best=d;active=Number(ch.dataset.step)||1}
+  });
+  counter.textContent=String(active).padStart(2,'0')+' / 10';
 
-  // HERO: headline drifts upward, symbols orbit, then the cream disc expands into the next scene.
+  // hero
   {
-    const s=chapters[0],p=localProgress(s),q=ease(p);
-    document.querySelectorAll('.hero-word').forEach((w,i)=>{
-      const yy=lerp(0,-120-i*30,clamp((p-.08*i)/.75));
-      const sc=lerp(1,.86,clamp(p/.8)); const rot=lerp(0,(i%2?3:-3),p);
-      w.style.transform='translateY('+yy+'px) scale('+sc+') rotate('+rot+'deg)';
-      w.style.opacity=1-clamp((p-.63)/.22);
+    const p=progress(chapters[0]),q=ease(p);
+    document.querySelector('.orbit').style.transform='rotate('+(p*120)+'deg) scale('+lerp(1,1.08,p)+')';
+    document.querySelectorAll('.hero-stage .hero-symbol').forEach((el,i)=>{
+      const a=p*Math.PI*2+i*2.05,rad=16+i*8;
+      el.style.transform='translate('+Math.cos(a)*rad+'px,'+Math.sin(a)*rad+'px) rotate('+(p*(i%2?55:-55))+'deg)';
     });
-    set(document.querySelector('.hero-copy p'),{transform:'translateY('+lerp(0,-80,p)+'px)',opacity:String(1-clamp((p-.48)/.25))});
-    set(document.querySelector('.scroll-note'),{opacity:String(1-clamp(p/.25)),transform:'translateY('+lerp(0,40,p)+'px)'});
-    const ring=document.querySelector('[data-ring]');ring.style.transform='rotate('+(p*140)+'deg) scale('+lerp(1,1.18,p)+')';
-    document.querySelectorAll('[data-hero-float]').forEach((el,i)=>{
-      const a=p*Math.PI*2+(i*2.1),rad=30+20*i;
-      el.style.transform='translate('+Math.cos(a)*rad+'px,'+Math.sin(a)*rad+'px) rotate('+(p*100*(i%2?1:-1))+'deg) scale('+lerp(1,.75,p)+')';
-    });
-    const wipe=document.querySelector('[data-hero-wipe]');
-    const wp=clamp((p-.62)/.38); wipe.style.transform='translate(-50%,-50%) scale('+lerp(.01,8,ease(wp))+')';
+    document.querySelector('.wipe').style.transform='translate(-50%,-50%) scale('+lerp(.05,7,ease(clamp((p-.65)/.35)))+')';
   }
 
-  // POPULATION: entire population drifts, selected points peel out and gather into a sample.
+  // population: only animate inside stage
   {
-    const s=chapters[1],p=localProgress(s),sampleP=ease(clamp((p-.2)/.48)),out=ease(clamp((p-.72)/.28));
-    const dots=[...people.children];
-    dots.forEach((d,i)=>{
-      const is=sampled.includes(i);
-      if(is){
-        const targetX=180+(sampled.indexOf(i)%4)*56;
-        const targetY=130+Math.floor(sampled.indexOf(i)/4)*70;
-        const r=d.getBoundingClientRect(),pr=people.getBoundingClientRect();
-        const cx=parseFloat(d.style.left)/100*pr.width, cy=parseFloat(d.style.top)/100*pr.height;
-        d.style.transform='translate('+lerp(0,targetX-cx,sampleP)+'px,'+lerp(0,targetY-cy,sampleP)+'px) scale('+lerp(1,1.28,sampleP)+') rotate('+lerp(0,(i%2?8:-8),sampleP)+'deg)';
+    const p=progress(chapters[1]),g=ease(clamp((p-.16)/.52)),fade=clamp((p-.78)/.22);
+    const pr=people.getBoundingClientRect();
+    [...people.children].forEach((d,i)=>{
+      if(sampled.includes(i)){
+        const idx=sampled.indexOf(i),tx=pr.width*.66+(idx%3)*45,ty=pr.height*.60+Math.floor(idx/3)*42;
+        const cx=parseFloat(d.style.left)/100*pr.width,cy=parseFloat(d.style.top)/100*pr.height;
+        d.style.transform='translate('+lerp(0,tx-cx,g)+'px,'+lerp(0,ty-cy,g)+'px) scale('+lerp(1,1.18,g)+')';
       }else{
-        d.style.transform='translate('+lerp(0,(i%2?18:-18),out)+'px,'+lerp(0,-30,out)+'px) scale('+lerp(1,.78,out)+')';
-        d.style.opacity=String(1-.55*out);
+        d.style.opacity=String(1-.5*fade);
+        d.style.transform='scale('+lerp(1,.86,fade)+')';
       }
     });
-    const l=document.querySelector('.sample-lasso');l.style.opacity=String(clamp((p-.38)/.14));l.style.transform='scale('+lerp(.1,1,ease(clamp((p-.35)/.2)))+') rotate('+lerp(-15,-4,sampleP)+'deg)';
-    const tag=document.querySelector('.population .sample-tag');tag.style.opacity=String(clamp((p-.48)/.14));tag.style.filter='blur('+lerp(12,0,clamp((p-.48)/.14))+'px)';
-    const b=document.querySelector('.population .bridge');b.style.opacity=String(clamp((p-.66)/.12)*(1-clamp((p-.92)/.08)));b.style.transform='translate(-50%,'+lerp(35,0,ease(clamp((p-.66)/.16)))+'px)';
+    const l=document.querySelector('.lasso');
+    l.style.opacity=String(clamp((p-.4)/.14));
+    l.style.transform='scale('+lerp(.25,1,ease(clamp((p-.36)/.22)))+') rotate(-5deg)';
   }
 
-  // PARAMETERS: two giant cards fly in from opposite sides, collide into alignment, then peel apart.
+  // parameter/statistic cards stay in their cells
   {
-    const p=localProgress(chapters[2]),enter=ease(clamp(p/.36)),hold=clamp((p-.34)/.34),leave=ease(clamp((p-.72)/.28));
-    const L=document.querySelector('.big-card.left'),R=document.querySelector('.big-card.right');
-    const lx=lerp(-110,0,enter)+lerp(0,-18,leave),rx=lerp(110,0,enter)+lerp(0,18,leave);
-    L.style.transform='translateX('+lx+'vw) rotate('+lerp(-14,-2,enter)+'deg) translateY('+lerp(0,-40,leave)+'px)';
-    R.style.transform='translateX('+rx+'vw) rotate('+lerp(14,2,enter)+'deg) translateY('+lerp(0,40,leave)+'px)';
-    const rule=document.querySelector('.center-rule');const rp=clamp((p-.38)/.2);rule.style.opacity=String(rp*(1-leave));rule.style.transform='translate(-50%,'+lerp(80,0,ease(rp))+'px) scale('+lerp(.8,1,ease(rp))+')';
+    const p=progress(chapters[2]),a=ease(clamp((p-.06)/.33)),b=ease(clamp((p-.28)/.33)),c=clamp((p-.58)/.15);
+    const L=document.querySelector('.param-card'),R=document.querySelector('.statistic-card');
+    L.style.transform='translateY('+lerp(55,0,a)+'px) rotate('+lerp(-5,0,a)+'deg)';
+    L.style.opacity=String(a);
+    R.style.transform='translateY('+lerp(55,0,b)+'px) rotate('+lerp(5,0,b)+'deg)';
+    R.style.opacity=String(b);
+    const rule=document.querySelector('.rule-chip');rule.style.opacity=String(c);rule.style.transform='translateX(-50%) translateY('+lerp(20,0,ease(c))+'px)';
   }
 
-  // ESTIMATE: apples fall into the scale, the scale settles, then 150g bursts forward.
+  // sampling distribution
   {
-    const p=localProgress(chapters[3]),gather=ease(clamp((p-.08)/.46)),burst=ease(clamp((p-.62)/.22)),fade=clamp((p-.88)/.12);
-    const world=document.querySelector('.apple-world');const wr=world.getBoundingClientRect();
-    apples.forEach((a,i)=>{
-      const left=applePos[i][0]/100*wr.width,top=applePos[i][1]/100*wr.height;
-      const tx=wr.width*.5-left-50+(i%2?26:-26),ty=wr.height*.48-top-40+(i%3)*10;
-      a.style.transform='translate('+lerp(0,tx,gather)+'px,'+lerp(-180-(i*22),ty,gather)+'px) rotate('+lerp(applePos[i][2],0,gather)+'deg) scale('+lerp(.65,1,gather)+')';
-      a.style.opacity=String(1-burst*.78);
+    const p=progress(chapters[3]),boxes=[...document.querySelectorAll('.mini-sample')],means=[...document.querySelectorAll('.mean-dot')];
+    boxes.forEach((b,i)=>{
+      const q=ease(clamp((p-i*.055)/.42));b.style.opacity=String(q);b.style.transform='translateY('+lerp(30,0,q)+'px) scale('+lerp(.8,1,q)+')';
     });
-    const sc=document.querySelector('.scale');sc.style.transform='translate(-50%,-50%) scale('+lerp(.25,1,ease(clamp((p-.22)/.3)))+') rotate('+lerp(-8,0,gather)+'deg)';
-    const num=document.querySelector('.number-pop');num.style.opacity=String(burst*(1-fade));num.style.transform='translate(-50%,-50%) scale('+lerp(.1,1.05,burst)+') rotate('+lerp(-8,2,burst)+'deg)';
+    means.forEach((d,i)=>{
+      const q=ease(clamp((p-.28-i*.022)/.5));d.style.opacity=String(q);d.style.transform='translateY('+lerp(80,0,q)+'px) scale('+lerp(.5,1,q)+')';
+    });
   }
 
-  // CONFIDENCE: build axis → point → interval → repeated intervals rise.
+  // estimate + SE
   {
-    const p=localProgress(chapters[4]);
-    const ap=ease(clamp((p-.04)/.22)),dp=ease(clamp((p-.18)/.18)),rp=ease(clamp((p-.33)/.24)),rainP=ease(clamp((p-.56)/.32));
-    const axis=document.querySelector('.confidence .axis');axis.style.transform='scaleX('+lerp(.02,1,ap)+')';
-    const dot=document.querySelector('.dot-est');dot.style.opacity=String(dp);dot.style.transform='translateX(-50%) scale('+lerp(.1,1,dp)+') rotate('+lerp(-20,0,dp)+'deg)';
-    const range=document.querySelector('.range');range.style.opacity=String(rp);range.style.transform='scaleX('+lerp(.01,1,rp)+')';
-    document.querySelectorAll('.confidence .tick').forEach((t,i)=>{const tp=clamp((p-.38-i*.035)/.14);t.style.opacity=String(tp);t.style.transform='translateY('+lerp(20,0,tp)+'px)'});
-    [...rain.children].forEach((el,i)=>{const ep=ease(clamp((rainP-i*.045)/.55));el.style.transform='scaleY('+ep+') rotate('+(i%2?1.5:-1.5)+'deg)';el.style.opacity=String(ep)});
+    const p=progress(chapters[4]),a=ease(clamp(p/.24)),b=ease(clamp((p-.18)/.28)),c=ease(clamp((p-.42)/.32));
+    document.querySelector('.estimator-line').style.transform='scaleX('+lerp(.02,1,a)+')';
+    document.querySelector('.estimate-dot').style.left=lerp(20,58,b)+'%';
+    document.querySelector('.se-band').style.opacity=String(c);document.querySelector('.se-band').style.transform='scaleX('+lerp(.05,1,c)+')';
+    document.querySelector('.se-label').style.opacity=String(c);
   }
 
-  // HYPOTHESIS: H0 and H1 slam in from the sides, VS pops, cards push against one another, verdict rises.
+  // confidence intervals
   {
-    const p=localProgress(chapters[5]),enter=ease(clamp((p-.06)/.34)),fight=ease(clamp((p-.43)/.28)),v=ease(clamp((p-.68)/.2));
+    const p=progress(chapters[5]),a=ease(clamp(p/.2)),b=ease(clamp((p-.15)/.2)),c=ease(clamp((p-.3)/.25)),d=ease(clamp((p-.52)/.36));
+    document.querySelector('.ci-axis').style.transform='scaleX('+lerp(.02,1,a)+')';
+    const point=document.querySelector('.ci-point');point.style.opacity=String(b);point.style.transform='translateX(-50%) scale('+lerp(.1,1,b)+')';
+    const range=document.querySelector('.ci-range');range.style.opacity=String(c);range.style.transform='scaleX('+lerp(.02,1,c)+')';
+    document.querySelectorAll('.ci-tick').forEach((t,i)=>{const q=clamp((p-.32-i*.03)/.15);t.style.opacity=String(q);t.style.transform='translateY('+lerp(14,0,q)+'px)'});
+    [...rain.children].forEach((el,i)=>{const q=ease(clamp((d-i*.045)/.45));el.style.opacity=String(q);el.style.transform='scaleY('+q+')'});
+  }
+
+  // hypotheses
+  {
+    const p=progress(chapters[6]),a=ease(clamp((p-.08)/.34)),b=ease(clamp((p-.24)/.34)),v=ease(clamp((p-.42)/.2));
     const h0=document.querySelector('.h0'),h1=document.querySelector('.h1');
-    h0.style.transform='translateX('+lerp(-80,lerp(0,2,fight),enter)+'vw) rotate('+lerp(-12,lerp(-2,1,fight),enter)+'deg)';
-    h1.style.transform='translateX('+lerp(80,lerp(0,-2,fight),enter)+'vw) rotate('+lerp(12,lerp(2,-1,fight),enter)+'deg)';
-    const vs=document.querySelector('.vs');vs.style.opacity=String(clamp((p-.28)/.15));vs.style.transform='translate(-50%,-50%) scale('+lerp(.1,1.05,ease(clamp((p-.28)/.18)))+') rotate('+lerp(-30,-5,fight)+'deg)';
-    const verdict=document.querySelector('.verdict');verdict.style.opacity=String(v);verdict.style.transform='translate(-50%,'+lerp(70,0,v)+'px)';
+    h0.style.opacity=String(a);h0.style.transform='translateY('+lerp(45,0,a)+'px) rotate('+lerp(-4,0,a)+'deg)';
+    h1.style.opacity=String(b);h1.style.transform='translateY('+lerp(45,0,b)+'px) rotate('+lerp(4,0,b)+'deg)';
+    const vs=document.querySelector('.vs');vs.style.opacity=String(v);vs.style.transform='translate(-50%,-50%) scale('+lerp(.1,1,v)+') rotate('+lerp(-20,0,v)+'deg)';
   }
 
-  // P-VALUE: draw curve, slide observed result into tail, shade tail, then blur-pop decision cards.
+  // p-value
   {
-    const p=localProgress(chapters[6]),draw=ease(clamp((p-.04)/.3)),mark=ease(clamp((p-.31)/.22)),tailP=ease(clamp((p-.48)/.16)),dec=ease(clamp((p-.64)/.22));
-    document.querySelector('.curve-path').style.strokeDashoffset=1300*(1-draw);
-    const marker=document.querySelector('.marker');marker.style.opacity=String(mark);marker.style.transform='translateX('+lerp(220,0,mark)+'px)';
-    document.querySelector('.tail').style.opacity=String(tailP);
-    const pb=document.querySelector('.pbubble');pb.style.opacity=String(tailP);pb.style.transform='scale('+lerp(.1,1,tailP)+') rotate('+lerp(15,5,tailP)+'deg)';
-    document.querySelectorAll('.decision-card').forEach((d,i)=>{const q=clamp((dec-i*.12)/.75);d.style.opacity=String(q);d.style.filter='blur('+lerp(14,0,q)+'px)';d.style.transform='translateY('+lerp(32,0,q)+'px)'});
+    const p=progress(chapters[7]),a=ease(clamp(p/.32)),b=ease(clamp((p-.3)/.2)),c=ease(clamp((p-.48)/.18));
+    document.querySelector('.curve').style.strokeDashoffset=1300*(1-a);
+    const m=document.querySelector('.marker');m.style.opacity=String(b);m.style.transform='translateX('+lerp(160,0,b)+'px)';
+    document.querySelector('.tail').style.opacity=String(c);
+    const chip=document.querySelector('.p-chip');chip.style.opacity=String(c);chip.style.transform='scale('+lerp(.1,1,c)+')';
   }
 
-  // FINAL: whole sequence condenses into one centered map.
+  // errors and power
   {
-    const p=localProgress(chapters[7]),q=ease(clamp((p-.12)/.55)),out=clamp((p-.88)/.12);
-    const f=document.querySelector('.final-center');f.style.opacity=String(q*(1-out));f.style.transform='translate(-50%,-50%) scale('+lerp(.78,1,q)+') rotate('+lerp(-2,0,q)+'deg)';
-    document.querySelectorAll('.flow span').forEach((s,i)=>{const sp=ease(clamp((p-.24-i*.045)/.42));s.style.transform='translateY('+lerp(35,0,sp)+'px) scale('+lerp(.78,1,sp)+')';s.style.opacity=String(sp)});
+    const p=progress(chapters[8]),cells=[...document.querySelectorAll('.matrix .cell')];
+    cells.forEach((el,i)=>{const q=ease(clamp((p-.06-i*.09)/.52));el.style.opacity=String(q);el.style.transform='translateY('+lerp(30,0,q)+'px)'});
+    const meter=document.querySelector('.power-meter i');meter.style.width=(lerp(0,82,ease(clamp((p-.52)/.38))))+'%';
+  }
+
+  // likelihood
+  {
+    const p=progress(chapters[9]),a=ease(clamp(p/.42)),b=ease(clamp((p-.4)/.22)),c=ease(clamp((p-.58)/.18));
+    document.querySelector('.like-curve').style.strokeDashoffset=1000*(1-a);
+    document.querySelector('.mle-line').style.opacity=String(b);
+    const dot=document.querySelector('.mle-dot');dot.style.opacity=String(b);dot.style.transform='scale('+lerp(.2,1,b)+')';
+    document.querySelector('.like-tag').style.opacity=String(c);document.querySelector('.like-tag').style.transform='translateY('+lerp(14,0,c)+'px)';
+  }
+
+  // bayes
+  {
+    const p=progress(chapters[10]),boxes=[...document.querySelectorAll('.bayes-box')],arrows=[...document.querySelectorAll('.bayes .arrow')];
+    boxes.forEach((el,i)=>{const q=ease(clamp((p-.05-i*.16)/.42));el.style.opacity=String(q);el.style.transform='translateY('+lerp(24,0,q)+'px) scale('+lerp(.9,1,q)+')'});
+    arrows.forEach((el,i)=>{const q=ease(clamp((p-.2-i*.22)/.28));el.style.opacity=String(q)});
+  }
+
+  // final symbols
+  {
+    const p=progress(chapters[11]),q=ease(clamp((p-.08)/.65));
+    const stage=chapters[11].querySelector('.stage');
+    stage.style.opacity=String(q);
+    stage.style.transform='scale('+lerp(.88,1,q)+')';
   }
 }
 function requestRender(){if(!ticking){ticking=true;requestAnimationFrame(render)}}
-addEventListener('scroll',requestRender,{passive:true});addEventListener('resize',requestRender);render();
+addEventListener('scroll',requestRender,{passive:true});
+addEventListener('resize',requestRender);
+render();
 </script>
 </body>
 </html>
-<style>
-.chapter .sticky{background:#FFF2B4 !important;color:#15370D !important}
-.hero-copy{left:5vw;top:19vh;width:min(610px,46vw)}
-.hero-copy p{color:#15370D !important}
-.scene-title{left:5vw;top:13vh;width:min(500px,38vw)}
-.people-field{right:5vw;top:16vh;width:min(48vw,620px);height:62vh}
-.person{width:42px;height:42px;background:#728E6D}
-.person.sampled{background:#E5CD82}
-.sample-lasso{width:27%;height:31%;right:8%;bottom:12%;border-color:#15370D}
-.sample-tag{right:6vw;bottom:6vh;background:#E5CD82}
-.bridge{bottom:4vh;font-size:clamp(1.4rem,2.4vw,2.5rem)}
-.big-card{width:min(430px,36vw);min-height:44vh}
-.big-card.left{left:9vw;top:25vh;background:#FFF2B4}
-.big-card.right{right:9vw;top:25vh;background:#E5CD82}
-.big-card .symbol{font-size:clamp(4rem,7vw,6.5rem)}
-.center-rule{top:80vh}
-.est-copy{left:5vw;top:14vh;width:min(470px,38vw)}
-.apple-world{right:5vw;top:15vh;width:min(46vw,600px);height:68vh}
-.apple{width:82px;height:70px;background:#728E6D}
-.scale{width:240px;height:175px;background:#E5CD82}
-.scale strong{font-size:2.6rem}
-.number-pop{left:73%;top:50%;font-size:clamp(3.6rem,7vw,6.8rem);color:#15370D}
-.ci-copy{left:5vw;top:10vh;width:min(520px,42vw)}
-.ci-stage{left:8vw;right:8vw;bottom:6vh;height:42vh}
-.dot-est{width:72px;height:72px;background:#E5CD82}
-.hypo-title{left:5vw;top:10vh;width:min(520px,42vw)}
-.h0,.h1{top:42vh;width:min(340px,34vw);min-height:31vh}
-.h0{left:10vw;background:#FFF2B4}.h1{right:10vw;background:#728E6D}
-.h0 b,.h1 b{font-size:clamp(3rem,5vw,4.8rem)}
-.vs{top:58%;font-size:clamp(2.4rem,4vw,4rem);color:#15370D}
-.verdict{bottom:4vh;font-size:clamp(1.35rem,2.2vw,2.3rem)}
-.p-copy{left:5vw;top:10vh;width:min(500px,40vw)}
-.bell{bottom:4vh;width:min(850px,82vw);height:46vh;background:#FFF2B4}
-.pbubble{width:140px;height:140px;background:#E5CD82;color:#15370D}
-.decision-card{width:min(285px,32vw)}
-.decision-card.left{background:#E5CD82}.decision-card.right{background:#728E6D}
-.decision-card strong{font-size:2rem}
-.final-center{width:min(900px,86vw)}
-.flow span{background:#E5CD82;color:#15370D}
-.hero .blob{border-color:#15370D !important}
-.b1,.b2,.b3{background:#E5CD82 !important;color:#15370D !important}
-.ring{border-color:#E5CD82}
-.pop-note,.progress-ui{background:rgba(255,242,180,.88)}
-.big-card,.h0,.h1,.bell,.scale,.progress-ui,.pop-note{box-shadow:8px 9px 0 rgba(21,55,13,.16)}
-@media(max-width:800px){
- h1{font-size:clamp(2.8rem,12vw,4.6rem)} h2{font-size:clamp(2.2rem,10vw,3.8rem)} p{font-size:1rem}
- .hero-copy,.scene-title,.est-copy,.ci-copy,.hypo-title,.p-copy{left:6vw;top:11vh;width:88vw}
- .people-field{left:8vw;right:auto;top:42vh;width:84vw;height:42vh}.person{width:30px;height:30px}
- .sample-lasso{width:38%;height:27%;right:9%;bottom:13%}.bridge{font-size:1.3rem}
- .big-card{width:76vw;min-height:30vh}.big-card.left{left:12vw;top:19vh}.big-card.right{right:12vw;top:52vh}
- .big-card .symbol{font-size:3.8rem}.center-rule{top:88vh;max-width:82vw;white-space:normal;text-align:center}
- .apple-world{left:8vw;right:auto;top:45vh;width:84vw;height:42vh}.apple{width:56px;height:48px}
- .scale{width:180px;height:130px}.scale strong{font-size:2rem}.number-pop{left:50%;top:72%;font-size:3.7rem}
- .ci-stage{left:4vw;right:4vw;bottom:5vh;height:40vh}
- .h0,.h1{top:45vh;width:40vw;min-height:27vh;padding:1rem}.h0{left:4vw}.h1{right:4vw}.verdict{font-size:1.2rem}
- .bell{width:92vw;height:43vh}.pbubble{width:105px;height:105px;font-size:.75rem}
- .decision-card{width:39vw;padding:.7rem}.decision-card p{font-size:.8rem}.decision-card strong{font-size:1.45rem}
-}
-</style>
