@@ -1,345 +1,395 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <meta name="theme-color" content="#15370D" />
-  <meta name="description" content="A scroll-guided visual lesson on statistical inference: samples, parameters, estimation, confidence intervals, hypothesis testing, and p-values." />
-  <title>Inference, Visually</title>
-  <style>
-    :root{
-      --forest:#15370D; --sage:#728E6D; --gold:#E5CD82; --cream:#FFF2B4;
-      --peach:#FFEAD3; --aqua:#BFE7EA; --orange:#E89B5B; --terracotta:#D46743;
-      --berry:#7C0E44; --rose:#AA5E7A; --dusty:#D49A9A; --blush:#F2DACE;
-      --ink:#15370D; --paper:#FFF2B4;
-      --title:"Amoria","Cooper Black","Arial Rounded MT Bold",serif;
-      --transition:"Bremlin","Trebuchet MS","Arial Rounded MT Bold",sans-serif;
-      --body:"Verve","Trebuchet MS","Verdana",sans-serif;
-    }
-    *{box-sizing:border-box}
-    html{scroll-behavior:smooth}
-    body{
-      margin:0; color:var(--ink); background:var(--paper); font-family:var(--body);
-      overflow-x:hidden; font-size:20px; line-height:1.48;
-      background-image:
-        radial-gradient(circle at 15% 20%,rgba(21,55,13,.055) 0 1.3px,transparent 1.7px),
-        radial-gradient(circle at 78% 32%,rgba(124,14,68,.04) 0 1px,transparent 1.4px);
-      background-size:18px 18px,25px 25px;
-    }
-    body:before{
-      content:""; position:fixed; inset:0; pointer-events:none; z-index:1000; opacity:.16; mix-blend-mode:multiply;
-      background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.72' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.18'/%3E%3C/svg%3E");
-    }
-    h1,h2,h3,p{margin-top:0}
-    h1,h2,h3{font-family:var(--title); letter-spacing:-.025em; line-height:.93}
-    h1{font-size:clamp(4rem,11vw,10rem); max-width:10ch; margin-bottom:1.5rem}
-    h2{font-size:clamp(3.2rem,8vw,7.2rem); margin-bottom:1.2rem}
-    h3{font-size:clamp(2rem,4.3vw,3.8rem)}
-    p{font-size:clamp(1.18rem,2vw,1.75rem); max-width:31ch}
-    .transition-copy{font-family:var(--transition); font-size:clamp(1.8rem,4.2vw,4.4rem); line-height:1.05}
-    .shell{width:min(1280px,92vw); margin:0 auto}
-    .topbar{
-      position:fixed; left:50%; top:20px; translate:-50% 0; z-index:90;
-      width:min(920px,91vw); border:2px solid var(--forest); background:rgba(255,242,180,.72);
-      backdrop-filter:blur(16px); border-radius:999px; display:flex; align-items:center; gap:10px;
-      padding:9px 12px 9px 18px; box-shadow:0 8px 0 rgba(21,55,13,.12);
-    }
-    .brand{font-family:var(--transition); font-weight:900; font-size:.9rem; margin-right:auto; white-space:nowrap}
-    .progress{height:10px; flex:1; border:1.5px solid var(--forest); border-radius:99px; overflow:hidden; background:rgba(255,255,255,.36)}
-    .progress > i{display:block; height:100%; width:0; background:var(--terracotta); transition:width .15s linear}
-    .count{min-width:52px; font-weight:800; text-align:right; font-size:.82rem}
-    .scene{min-height:100svh; position:relative; display:grid; align-items:center; padding:9rem 0 6rem}
-    .hero{background:var(--forest); color:var(--cream); min-height:110svh; overflow:hidden}
-    .hero .shell{position:relative; z-index:2}
-    .eyebrow{font-family:var(--transition); font-size:clamp(1.25rem,2vw,2rem); margin-bottom:1.1rem}
-    .hero p{color:var(--peach)}
-    .scroll-cue{display:inline-flex; align-items:center; gap:12px; margin-top:2rem; font-weight:900}
-    .scroll-cue i{width:48px;height:48px;border:2px solid currentColor;border-radius:50%;display:grid;place-items:center;animation:bob 1.5s ease-in-out infinite}
-    @keyframes bob{50%{transform:translateY(8px)}}
-    .hero-orbit{position:absolute; inset:auto -7vw -22vw auto; width:min(69vw,900px); aspect-ratio:1; border:3px dashed var(--gold); border-radius:50%; animation:spin 30s linear infinite}
-    @keyframes spin{to{rotate:360deg}}
-    .float-symbol{position:absolute; font-family:var(--title); display:grid; place-items:center; border:3px solid var(--forest); box-shadow:8px 10px 0 rgba(21,55,13,.15); user-select:none}
-    .hero .float-symbol{border-color:var(--cream);box-shadow:8px 10px 0 rgba(255,242,180,.12)}
-    .s1{right:7vw;top:20vh;width:150px;height:115px;border-radius:55% 45% 53% 47%;background:var(--orange);color:var(--forest);font-size:3.6rem;rotate:8deg}
-    .s2{right:26vw;bottom:13vh;width:125px;height:125px;border-radius:50%;background:var(--aqua);color:var(--berry);font-size:3rem;rotate:-12deg}
-    .s3{left:55vw;top:48vh;width:105px;height:88px;border-radius:40% 60% 46% 54%;background:var(--dusty);color:var(--forest);font-size:2.6rem}
-    .split{display:grid;grid-template-columns:1.02fr .98fr;gap:clamp(2rem,6vw,7rem);align-items:center}
-    .card{
-      position:relative; border:3px solid var(--forest); border-radius:42px; padding:clamp(1.5rem,4vw,3.4rem);
-      box-shadow:12px 14px 0 var(--forest); overflow:hidden;
-    }
-    .card p{max-width:none}
-    .pop{background:var(--peach)}
-    .sample{background:var(--aqua)}
-    .visual-stage{min-height:520px;position:relative}
-    .dot-cloud{position:absolute;inset:4% 3%;display:grid;grid-template-columns:repeat(8,1fr);gap:14px;align-content:center}
-    .dot{aspect-ratio:1;border-radius:50%;background:var(--sage);border:2px solid var(--forest);transition:transform .5s,opacity .5s,filter .5s}
-    .dot.sampled{background:var(--terracotta);transform:scale(1.23);box-shadow:0 0 0 6px var(--cream)}
-    .brace{position:absolute;right:0;bottom:2%;background:var(--cream);border:2px solid var(--forest);border-radius:20px;padding:.7rem 1rem;font-family:var(--transition);font-size:1.2rem;rotate:-3deg}
-    .reveal{opacity:0;filter:blur(16px);transform:translateY(55px) scale(.97);transition:opacity .85s ease,filter .85s ease,transform .85s cubic-bezier(.2,.8,.2,1)}
-    .reveal.visible{opacity:1;filter:blur(0);transform:none}
-    .wipe{background:var(--berry);color:var(--peach);min-height:125svh;overflow:hidden}
-    .wipe:after{content:"";position:absolute;width:52vw;height:52vw;border-radius:50%;background:var(--rose);right:-15vw;top:22vh;filter:blur(1px)}
-    .symbol-pair{display:flex;gap:clamp(1rem,4vw,4rem);position:relative;z-index:3;margin-top:3rem;flex-wrap:wrap}
-    .symbol-card{min-width:min(320px,100%);flex:1;background:var(--blush);color:var(--forest);border:3px solid var(--peach);border-radius:44px;padding:2rem;rotate:-2deg}
-    .symbol-card:nth-child(2){background:var(--gold);rotate:3deg}
-    .symbol{font-family:var(--title);font-size:clamp(4rem,10vw,9rem);line-height:1}
-    .rule{display:inline-block;background:var(--cream);color:var(--forest);padding:.75rem 1.2rem;border-radius:999px;font-family:var(--transition);font-weight:900;margin-top:2rem}
-    .estimate{background:var(--blush)}
-    .apple-stage{height:520px;position:relative}
-    .apple{
-      position:absolute;width:92px;height:78px;border-radius:48% 52% 50% 50%;background:var(--terracotta);
-      border:3px solid var(--forest);box-shadow:5px 7px 0 rgba(21,55,13,.18);
-    }
-    .apple:before{content:"";position:absolute;width:10px;height:26px;background:var(--forest);left:48%;top:-17px;border-radius:9px;rotate:11deg}
-    .apple:after{content:"";position:absolute;width:31px;height:17px;background:var(--sage);border:2px solid var(--forest);border-radius:100% 0 100% 0;left:55%;top:-15px;rotate:-18deg}
-    .apple:nth-child(1){left:5%;top:20%;rotate:-8deg}.apple:nth-child(2){left:35%;top:5%;scale:.78;rotate:7deg}
-    .apple:nth-child(3){right:11%;top:23%;scale:1.15;rotate:11deg}.apple:nth-child(4){left:18%;bottom:10%;scale:.91}
-    .apple:nth-child(5){right:28%;bottom:6%;scale:.7;rotate:-12deg}
-    .scale{position:absolute;left:50%;top:50%;translate:-50% -30%;width:260px;height:180px;background:var(--gold);border:3px solid var(--forest);border-radius:45px 45px 28px 28px;display:grid;place-items:center;box-shadow:10px 12px 0 var(--forest)}
-    .scale strong{font-family:var(--title);font-size:3.1rem}
-    .scale small{display:block;text-align:center;font-family:var(--transition);font-size:1.15rem}
-    .confidence{background:var(--aqua);min-height:120svh}
-    .ci-track{margin:4rem 0 2rem;position:relative;height:210px}
-    .axis{position:absolute;left:0;right:0;top:48%;height:5px;background:var(--forest);border-radius:99px}
-    .ci-range{position:absolute;left:18%;right:18%;top:38%;height:52px;border-radius:99px;background:var(--gold);border:3px solid var(--forest);box-shadow:6px 7px 0 rgba(21,55,13,.15)}
-    .ci-range:before,.ci-range:after{content:"";position:absolute;top:-18px;width:5px;height:82px;background:var(--forest);border-radius:9px}
-    .ci-range:before{left:0}.ci-range:after{right:0}
-    .point{position:absolute;left:50%;top:24%;translate:-50% 0;width:82px;height:82px;border-radius:50%;background:var(--terracotta);border:3px solid var(--forest);display:grid;place-items:center;font-family:var(--title);font-size:1.8rem;z-index:2}
-    .tick{position:absolute;top:66%;font-family:var(--transition);font-weight:900;font-size:1.25rem}.t1{left:16%}.t2{left:48%}.t3{right:15%}
-    .intervals{display:flex;gap:13px;height:230px;align-items:flex-end;margin-top:2rem}
-    .interval{width:calc(10% - 10px);height:var(--h);position:relative;border-left:6px solid var(--forest);opacity:.76;transform-origin:bottom}
-    .interval:before{content:"";position:absolute;top:0;left:-14px;width:24px;height:5px;background:var(--forest);border-radius:7px}
-    .interval.hit{border-color:var(--sage)} .interval.miss{border-color:var(--terracotta)}
-    .hypothesis{background:var(--gold);min-height:125svh}
-    .versus{display:grid;grid-template-columns:1fr auto 1fr;gap:1.3rem;align-items:stretch;margin-top:3rem}
-    .hypo{border:3px solid var(--forest);border-radius:42px;padding:2rem;background:var(--peach);box-shadow:9px 11px 0 var(--forest)}
-    .hypo.alt{background:var(--dusty)}
-    .vs{align-self:center;font-family:var(--title);font-size:clamp(2.5rem,6vw,6rem);rotate:-8deg;color:var(--berry)}
-    .hypo b{font-family:var(--title);font-size:clamp(3rem,7vw,6rem);display:block}
-    .pvalue{background:var(--peach);min-height:135svh}
-    .curve-wrap{position:relative;height:410px;margin-top:3rem;border:3px solid var(--forest);border-radius:42px;background:var(--cream);overflow:hidden;box-shadow:12px 14px 0 var(--forest)}
-    .curve-svg{width:100%;height:100%}
-    .p-badge{position:absolute;right:7%;top:12%;background:var(--berry);color:var(--peach);border-radius:50%;width:180px;height:180px;display:grid;place-items:center;text-align:center;border:3px solid var(--forest);font-family:var(--transition);font-size:1.25rem;rotate:7deg}
-    .decision{display:grid;grid-template-columns:1fr 1fr;gap:1.3rem;margin-top:2.5rem}
-    .decision article{border:3px solid var(--forest);border-radius:34px;padding:1.8rem;background:var(--aqua)}
-    .decision article:last-child{background:var(--blush)}
-    .decision strong{display:block;font-family:var(--title);font-size:clamp(2rem,4vw,3.5rem)}
-    .finale{background:var(--forest);color:var(--peach);min-height:110svh;text-align:center}
-    .finale .shell{display:grid;place-items:center}
-    .finale p{max-width:32ch}
-    .loop{display:flex;flex-wrap:wrap;justify-content:center;gap:.8rem;margin:2rem 0 3rem}
-    .loop span{background:var(--cream);color:var(--forest);border:2px solid var(--peach);border-radius:999px;padding:.65rem 1rem;font-family:var(--transition);font-weight:900}
-    .footer-note{font-size:.86rem;opacity:.78}
-    .orb{position:absolute;border:3px solid var(--forest);border-radius:50%;pointer-events:none}
-    .o1{width:90px;height:90px;background:var(--orange);right:8%;top:13%;}.o2{width:55px;height:55px;background:var(--berry);left:4%;bottom:16%}
-    @media(max-width:800px){
-      body{font-size:18px}.split{grid-template-columns:1fr}.scene{padding:8rem 0 5rem}
-      .visual-stage,.apple-stage{min-height:400px;height:400px}.versus{grid-template-columns:1fr}.vs{text-align:center}
-      .decision{grid-template-columns:1fr}.hero .float-symbol{opacity:.38}.topbar{top:10px}
-      .brand{display:none}.dot-cloud{gap:8px}.symbol-pair{display:grid}.curve-wrap{height:340px}
-    }
-    @media(prefers-reduced-motion:reduce){
-      html{scroll-behavior:auto}.hero-orbit,.scroll-cue i{animation:none}.reveal{transition:none}.float-symbol{transform:none!important}
-    }
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#15370D">
+<title>Inference, in Motion</title>
+<style>
+:root{
+  --forest:#15370D;--sage:#728E6D;--gold:#E5CD82;--cream:#FFF2B4;--peach:#FFEAD3;
+  --aqua:#BFE7EA;--orange:#E89B5B;--terra:#D46743;--berry:#7C0E44;--rose:#AA5E7A;
+  --dusty:#D49A9A;--blush:#F2DACE;
+  --title:"Amoria","Cooper Black","Arial Rounded MT Bold",serif;
+  --transition:"Bremlin","Trebuchet MS","Arial Rounded MT Bold",sans-serif;
+  --body:"Verve","Trebuchet MS",Verdana,sans-serif;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--cream);color:var(--forest);font-family:var(--body);overflow-x:hidden}
+body:after{content:"";position:fixed;inset:0;z-index:999;pointer-events:none;opacity:.18;mix-blend-mode:multiply;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.25'/%3E%3C/svg%3E")}
+h1,h2,h3,p{margin:0}
+h1,h2,h3{font-family:var(--title);line-height:.91;letter-spacing:-.035em}
+h1{font-size:clamp(4.3rem,11vw,10.5rem)}
+h2{font-size:clamp(3.3rem,8vw,7.5rem)}
+h3{font-size:clamp(2.1rem,4vw,4rem)}
+p{font-size:clamp(1.2rem,2vw,1.75rem);line-height:1.45}
+.kicker,.hand{font-family:var(--transition)}
+.kicker{font-size:clamp(1.15rem,1.7vw,1.6rem);font-weight:900;text-transform:uppercase;letter-spacing:.06em}
+.hand{font-size:clamp(1.7rem,3.8vw,4.3rem);line-height:1.05}
+.progress-ui{position:fixed;z-index:90;top:18px;left:50%;transform:translateX(-50%);width:min(920px,92vw);display:flex;align-items:center;gap:12px;padding:10px 14px;border:2px solid var(--forest);border-radius:999px;background:rgba(255,242,180,.7);backdrop-filter:blur(14px);box-shadow:0 8px 0 rgba(21,55,13,.12)}
+.progress-ui b{font-family:var(--transition);font-size:.9rem;white-space:nowrap}
+.track{height:9px;flex:1;border:1.5px solid var(--forest);border-radius:99px;overflow:hidden}.track i{display:block;width:0;height:100%;background:var(--terra)}
+.counter{font-weight:900;font-size:.85rem}
+.chapter{position:relative;height:260vh}
+.chapter.short{height:210vh}
+.sticky{position:sticky;top:0;height:100svh;overflow:hidden;display:grid;place-items:center}
+.inner{width:min(1280px,92vw);height:100%;position:relative;z-index:5}
+.panel{position:absolute;inset:0}
+.hero .sticky{background:var(--forest);color:var(--cream)}
+.hero-copy{position:absolute;left:4vw;top:18vh;width:min(900px,82vw);z-index:10}
+.hero-copy p{margin-top:1.5rem;max-width:31ch;color:var(--peach)}
+.hero-word{display:inline-block;transform-origin:50% 70%}
+.scroll-note{position:absolute;left:4vw;bottom:8vh;display:flex;gap:13px;align-items:center;font-weight:900}.scroll-note i{width:52px;height:52px;border:2px solid;border-radius:50%;display:grid;place-items:center}
+.blob{position:absolute;border:3px solid var(--forest);box-shadow:10px 12px 0 rgba(21,55,13,.14)}
+.hero .blob{border-color:var(--cream)}
+.b1{width:170px;height:135px;background:var(--orange);border-radius:55% 45% 62% 38%;right:7vw;top:18vh;display:grid;place-items:center;color:var(--forest);font:4rem var(--title)}
+.b2{width:140px;height:140px;background:var(--aqua);border-radius:50%;right:28vw;bottom:12vh;display:grid;place-items:center;color:var(--berry);font:3.2rem var(--title)}
+.b3{width:110px;height:95px;background:var(--dusty);border-radius:44% 56% 47% 53%;right:18vw;top:52vh;display:grid;place-items:center;color:var(--forest);font:2.8rem var(--title)}
+.ring{position:absolute;width:min(82vw,980px);aspect-ratio:1;border:3px dashed var(--gold);border-radius:50%;right:-28vw;bottom:-43vw}
+.wipe-disc{position:absolute;width:20vmax;height:20vmax;border-radius:50%;background:var(--cream);left:50%;top:50%;transform:translate(-50%,-50%) scale(.01);z-index:4}
+.chapter.population .sticky{background:var(--cream)}
+.scene-title{position:absolute;left:4vw;top:12vh;width:min(650px,82vw);z-index:20}
+.scene-title .kicker{margin-bottom:1rem}.scene-title p{margin-top:1.3rem;max-width:28ch}
+.people-field{position:absolute;right:3vw;top:12vh;width:min(54vw,720px);height:72vh}
+.person{position:absolute;width:54px;height:54px;border-radius:50%;background:var(--sage);border:2.5px solid var(--forest);box-shadow:5px 6px 0 rgba(21,55,13,.12)}
+.person.sampled{background:var(--terra)}
+.sample-lasso{position:absolute;border:5px dashed var(--berry);border-radius:48% 52% 45% 55%;width:45%;height:46%;right:4%;bottom:6%;transform:scale(.1) rotate(-15deg);opacity:0}
+.sample-tag{position:absolute;right:4vw;bottom:7vh;background:var(--aqua);border:2px solid var(--forest);border-radius:22px;padding:1rem 1.3rem;font:1.25rem var(--transition);font-weight:900;box-shadow:7px 8px 0 var(--forest);opacity:0;filter:blur(12px)}
+.bridge{position:absolute;left:50%;bottom:6vh;transform:translateX(-50%);font:clamp(2rem,4.4vw,4.8rem)/1.02 var(--transition);text-align:center;width:min(900px,88vw);opacity:0}
+.chapter.parameters .sticky{background:var(--berry);color:var(--peach)}
+.cards-stage{position:absolute;inset:0}
+.big-card{position:absolute;width:min(560px,70vw);min-height:56vh;border:3px solid var(--peach);border-radius:50px;padding:clamp(2rem,4vw,4rem);box-shadow:14px 16px 0 rgba(21,55,13,.28)}
+.big-card.left{left:7vw;top:20vh;background:var(--blush);color:var(--forest);transform:translateX(-110vw) rotate(-14deg)}
+.big-card.right{right:7vw;top:20vh;background:var(--gold);color:var(--forest);transform:translateX(110vw) rotate(14deg)}
+.big-card .symbol{font:clamp(6rem,11vw,10rem)/.9 var(--title)}
+.center-rule{position:absolute;left:50%;top:73vh;transform:translate(-50%,80px);opacity:0;background:var(--cream);color:var(--forest);border:3px solid var(--forest);border-radius:999px;padding:1rem 1.6rem;font:clamp(1.15rem,2vw,1.6rem) var(--transition);font-weight:900;white-space:nowrap}
+.chapter.estimate .sticky{background:var(--blush)}
+.est-copy{position:absolute;left:4vw;top:15vh;width:min(600px,85vw);z-index:10}.est-copy p{margin-top:1.4rem;max-width:29ch}
+.apple-world{position:absolute;right:2vw;top:5vh;width:min(58vw,760px);height:86vh}
+.apple{position:absolute;width:105px;height:88px;border-radius:48% 52% 50% 50%;background:var(--terra);border:3px solid var(--forest);box-shadow:6px 8px 0 rgba(21,55,13,.16)}
+.apple:before{content:"";position:absolute;width:11px;height:28px;background:var(--forest);border-radius:9px;left:48%;top:-18px;transform:rotate(10deg)}
+.apple:after{content:"";position:absolute;width:34px;height:18px;background:var(--sage);border:2px solid var(--forest);border-radius:100% 0 100% 0;left:57%;top:-15px;transform:rotate(-17deg)}
+.scale{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%) scale(.25) rotate(-8deg);width:300px;height:220px;background:var(--gold);border:3px solid var(--forest);border-radius:55px 55px 32px 32px;box-shadow:12px 14px 0 var(--forest);display:grid;place-items:center;text-align:center}
+.scale strong{font:3.5rem var(--title)}.scale small{font:1.2rem var(--transition)}
+.number-pop{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%) scale(.1);font:clamp(5rem,12vw,12rem)/1 var(--title);color:var(--berry);opacity:0;z-index:14}
+.chapter.confidence .sticky{background:var(--aqua)}
+.ci-copy{position:absolute;left:4vw;top:10vh;width:min(690px,88vw);z-index:10}.ci-copy p{margin-top:1.2rem;max-width:31ch}
+.ci-stage{position:absolute;left:5vw;right:5vw;bottom:8vh;height:50vh}
+.axis{position:absolute;left:6%;right:6%;top:52%;height:6px;border-radius:20px;background:var(--forest);transform:scaleX(.02);transform-origin:left}
+.range{position:absolute;left:28%;right:28%;top:45%;height:68px;border:3px solid var(--forest);background:var(--gold);border-radius:999px;transform:scaleX(.01);opacity:0}
+.range:before,.range:after{content:"";position:absolute;top:-18px;width:6px;height:98px;background:var(--forest);border-radius:9px}.range:before{left:0}.range:after{right:0}
+.dot-est{position:absolute;left:50%;top:38%;transform:translateX(-50%) scale(.1);width:96px;height:96px;border-radius:50%;background:var(--terra);border:3px solid var(--forest);display:grid;place-items:center;font:2rem var(--title);opacity:0}
+.tick{position:absolute;top:64%;font:1.25rem var(--transition);font-weight:900;opacity:0}.t1{left:26%}.t2{left:48%}.t3{right:25%}
+.rain{position:absolute;inset:0;pointer-events:none}
+.rain i{position:absolute;width:6px;height:0;background:var(--sage);border-radius:9px;bottom:3%;transform-origin:bottom}
+.rain i:before,.rain i:after{content:"";position:absolute;left:-10px;width:26px;height:5px;background:inherit;border-radius:8px}.rain i:before{top:0}.rain i:after{bottom:0}
+.rain i.miss{background:var(--terra)}
+.chapter.hypothesis .sticky{background:var(--gold)}
+.hypo-title{position:absolute;left:4vw;top:11vh;width:min(700px,90vw)}
+.h0,.h1{position:absolute;top:37vh;width:min(390px,42vw);min-height:36vh;border:3px solid var(--forest);border-radius:48px;padding:2.1rem;box-shadow:11px 13px 0 var(--forest)}
+.h0{left:8vw;background:var(--peach);transform:translateX(-80vw) rotate(-12deg)}
+.h1{right:8vw;background:var(--dusty);transform:translateX(80vw) rotate(12deg)}
+.h0 b,.h1 b{display:block;font:clamp(4rem,8vw,7rem) var(--title)}
+.vs{position:absolute;left:50%;top:53%;transform:translate(-50%,-50%) scale(.1) rotate(-30deg);font:clamp(3rem,7vw,7rem) var(--title);color:var(--berry);opacity:0}
+.verdict{position:absolute;left:50%;bottom:5vh;transform:translate(-50%,70px);opacity:0;width:min(900px,90vw);text-align:center;font:clamp(2rem,4.5vw,4.5rem)/1.04 var(--transition)}
+.chapter.pvalue .sticky{background:var(--peach)}
+.p-copy{position:absolute;left:4vw;top:10vh;width:min(650px,90vw)}
+.bell{position:absolute;left:50%;bottom:5vh;transform:translateX(-50%);width:min(940px,90vw);height:52vh;border:3px solid var(--forest);border-radius:50px;background:var(--cream);box-shadow:13px 15px 0 var(--forest);overflow:hidden}
+.bell svg{width:100%;height:100%}
+.curve-path{stroke-dasharray:1300;stroke-dashoffset:1300}
+.tail{opacity:0}
+.marker{transform:translateX(220px);opacity:0}
+.pbubble{position:absolute;right:4%;top:8%;width:190px;height:190px;border-radius:50%;background:var(--berry);color:var(--peach);border:3px solid var(--forest);display:grid;place-items:center;text-align:center;font:1.15rem var(--transition);transform:scale(.1) rotate(15deg);opacity:0}
+.decision-card{position:absolute;bottom:6%;width:min(330px,38vw);padding:1.4rem;border:3px solid var(--forest);border-radius:30px;background:var(--aqua);opacity:0;filter:blur(14px)}
+.decision-card.left{left:5%}.decision-card.right{right:5%;background:var(--blush)}
+.decision-card strong{font:2.7rem var(--title)}
+.chapter.final .sticky{background:var(--forest);color:var(--peach)}
+.final-center{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%) scale(.8);width:min(1100px,92vw);text-align:center;opacity:0}
+.flow{display:flex;flex-wrap:wrap;justify-content:center;gap:.75rem;margin:2rem auto;max-width:950px}.flow span{padding:.7rem 1.1rem;border:2px solid var(--peach);border-radius:999px;background:var(--cream);color:var(--forest);font:1.15rem var(--transition);font-weight:900}
+.pop-note{position:absolute;z-index:40;padding:.8rem 1rem;border:2px solid var(--forest);border-radius:20px;background:rgba(255,242,180,.78);backdrop-filter:blur(14px);font:1.05rem var(--transition);font-weight:900;opacity:0;filter:blur(14px);transform:translateY(20px) rotate(-2deg);transition:.65s ease}
+.pop-note.show{opacity:1;filter:blur(0);transform:translateY(0) rotate(-2deg)}
+.note-a{right:6vw;top:12vh}.note-b{left:50%;bottom:3vh;transform:translate(-50%,20px)}
+@media(max-width:800px){
+  .chapter{height:230vh}.inner{width:94vw}.progress-ui b{display:none}
+  .scene-title,.est-copy,.ci-copy,.hypo-title,.p-copy{left:5vw;top:11vh;width:88vw}
+  .people-field{left:5vw;right:auto;top:44vh;width:90vw;height:48vh}
+  .person{width:40px;height:40px}.bridge{font-size:2rem}
+  .big-card{width:80vw;min-height:37vh;padding:1.5rem}.big-card.left{left:10vw;top:19vh}.big-card.right{right:10vw;top:53vh}
+  .center-rule{top:88vh;font-size:.9rem}
+  .apple-world{left:0;right:0;top:45vh;width:100%;height:50vh}.apple{width:72px;height:62px}.scale{width:220px;height:160px}.scale strong{font-size:2.6rem}
+  .ci-stage{left:1vw;right:1vw;height:46vh;bottom:4vh}.rain{opacity:.8}
+  .h0,.h1{width:40vw;top:45vh;padding:1rem;min-height:31vh}.h0{left:4vw}.h1{right:4vw}.verdict{font-size:2rem}
+  .bell{height:48vh;bottom:3vh}.pbubble{width:130px;height:130px;font-size:.9rem}.decision-card{width:42vw;padding:.8rem}.decision-card p{font-size:.95rem}.decision-card strong{font-size:1.8rem}
+}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+</style>
 </head>
 <body>
-  <nav class="topbar" aria-label="lesson progress">
-    <span class="brand">INFERENCE / VISUAL</span>
-    <div class="progress" aria-hidden="true"><i id="progressBar"></i></div>
-    <span class="count" id="progressText">01 / 06</span>
-  </nav>
-
-  <main>
-    <section class="scene hero" data-step="1">
-      <div class="hero-orbit"></div>
-      <div class="float-symbol s1" data-float="0.08">x̄</div>
-      <div class="float-symbol s2" data-float="-0.05">μ</div>
-      <div class="float-symbol s3" data-float="0.11">p̂</div>
-      <div class="shell">
-        <div class="eyebrow reveal">small data → bigger claims</div>
-        <h1 class="reveal">How do we learn about everyone… without measuring everyone?</h1>
-        <p class="reveal">Scroll through the logic. Each scene turns one piece of statistical inference into something you can see.</p>
-        <div class="scroll-cue reveal"><i>↓</i><span>follow the sample</span></div>
+<nav class="progress-ui"><b>INFERENCE / IN MOTION</b><div class="track"><i id="globalBar"></i></div><span class="counter" id="count">01 / 06</span></nav>
+<main>
+<section class="chapter hero short" data-step="1">
+  <div class="sticky">
+    <div class="wipe-disc" data-hero-wipe></div>
+    <div class="ring" data-ring></div>
+    <div class="blob b1" data-hero-float="1">x̄</div>
+    <div class="blob b2" data-hero-float="2">μ</div>
+    <div class="blob b3" data-hero-float="3">p̂</div>
+    <div class="inner">
+      <div class="hero-copy">
+        <div class="kicker">small data → bigger claims</div>
+        <h1><span class="hero-word">How</span> <span class="hero-word">do we</span><br><span class="hero-word">learn about</span><br><span class="hero-word">everyone?</span></h1>
+        <p>Scroll. The sample will literally separate from the population, become a statistic, turn into an estimate, grow an interval, and finally face a hypothesis test.</p>
       </div>
-    </section>
+      <div class="scroll-note"><i>↓</i><span>move the story</span></div>
+    </div>
+  </div>
+</section>
 
-    <section class="scene" data-step="1" style="background:var(--cream)">
-      <div class="orb o1"></div><div class="orb o2"></div>
-      <div class="shell split">
-        <div>
-          <div class="eyebrow reveal">01 — WHO ARE WE TALKING ABOUT?</div>
-          <h2 class="reveal">Population vs. Sample</h2>
-          <p class="reveal">The <b>population</b> is the complete group we care about. The <b>sample</b> is the smaller subgroup we actually observe.</p>
-          <p class="transition-copy reveal">We measure a few → to say something about many.</p>
-        </div>
-        <div class="card sample reveal">
-          <div class="visual-stage">
-            <div class="dot-cloud" id="dotCloud" aria-label="cartoon population dots"></div>
-            <div class="brace">orange dots = the sample</div>
-          </div>
-        </div>
+<section class="chapter population" data-step="1">
+  <div class="sticky">
+    <div class="inner">
+      <div class="scene-title">
+        <div class="kicker">01 — WHO ARE WE TALKING ABOUT?</div>
+        <h2>Population<br>vs. Sample</h2>
+        <p>The population is the complete group we care about. The sample is the smaller subgroup we actually observe.</p>
       </div>
-    </section>
+      <div class="people-field" id="people"></div>
+      <div class="sample-lasso"></div>
+      <div class="sample-tag pop-note">this smaller group is what we can actually measure</div>
+      <div class="bridge">We measure a few<br>→ to learn about many.</div>
+    </div>
+  </div>
+</section>
 
-    <section class="scene wipe" data-step="2">
-      <div class="shell">
-        <div class="eyebrow reveal">02 — KEEP THE LANGUAGE STRAIGHT</div>
-        <h2 class="reveal">Parameters live in populations.<br>Statistics live in samples.</h2>
-        <div class="symbol-pair">
-          <article class="symbol-card reveal">
-            <div class="symbol">μ / p</div>
-            <h3>Parameter</h3>
-            <p>A fixed, usually unknown number describing the whole population.</p>
-          </article>
-          <article class="symbol-card reveal">
-            <div class="symbol">x̄ / p̂</div>
-            <h3>Statistic</h3>
-            <p>A known number calculated from sample data, used to estimate the parameter.</p>
-          </article>
-        </div>
-        <div class="rule reveal">Population ↔ Parameter · Sample ↔ Statistic</div>
+<section class="chapter parameters" data-step="2">
+  <div class="sticky">
+    <div class="inner cards-stage">
+      <article class="big-card left"><div class="kicker">population</div><div class="symbol">μ / p</div><h3>Parameter</h3><p>A fixed, usually unknown numerical value describing the entire population.</p></article>
+      <article class="big-card right"><div class="kicker">sample</div><div class="symbol">x̄ / p̂</div><h3>Statistic</h3><p>A known numerical value calculated from sample data and used to estimate the parameter.</p></article>
+      <div class="center-rule">Population ↔ Parameter &nbsp; · &nbsp; Sample ↔ Statistic</div>
+    </div>
+  </div>
+</section>
+
+<section class="chapter estimate" data-step="3">
+  <div class="sticky">
+    <div class="inner">
+      <div class="est-copy"><div class="kicker">03 — MAKE A BEST GUESS</div><h2>Point<br>Estimation</h2><p>A point estimate is one number computed from the sample and used as our best guess for an unknown population parameter.</p><p style="margin-top:1rem">In the PDF example, a sample of 50 apples has average weight <b>150 g</b>.</p></div>
+      <div class="apple-world">
+        <div class="apple"></div><div class="apple"></div><div class="apple"></div><div class="apple"></div><div class="apple"></div><div class="apple"></div>
+        <div class="scale"><div><strong>x̄ = 150g</strong><small>the sample mean</small></div></div>
       </div>
-    </section>
+      <div class="number-pop">150g</div>
+      <div class="pop-note note-a">one number becomes our “best guess” for μ</div>
+    </div>
+  </div>
+</section>
 
-    <section class="scene estimate" data-step="3">
-      <div class="shell split">
-        <div>
-          <div class="eyebrow reveal">03 — MAKE A BEST GUESS</div>
-          <h2 class="reveal">Point Estimation</h2>
-          <p class="reveal">A <b>point estimate</b> is one number from the sample used as our best guess for an unknown population parameter.</p>
-          <p class="reveal">Imagine 50 sampled apples average <b>150 g</b>. Then 150 g is our estimate of the true average weight of every apple in the orchard.</p>
-          <p class="transition-copy reveal">Useful? Yes.<br>Perfect? Rarely.</p>
-        </div>
-        <div class="apple-stage reveal" aria-label="cartoon apples around a scale">
-          <div class="apple"></div><div class="apple"></div><div class="apple"></div><div class="apple"></div><div class="apple"></div>
-          <div class="scale"><div><strong>x̄ = 150g</strong><small>our point estimate</small></div></div>
-        </div>
+<section class="chapter confidence" data-step="4">
+  <div class="sticky">
+    <div class="inner">
+      <div class="ci-copy"><div class="kicker">04 — ADMIT THE UNCERTAINTY</div><h2>Confidence<br>Intervals</h2><p>A point estimate is imperfect, so we give a range of plausible values: point estimate ± margin of error.</p></div>
+      <div class="ci-stage">
+        <div class="axis"></div><div class="range"></div><div class="dot-est">x̄</div>
+        <span class="tick t1">145 g</span><span class="tick t2">150 g</span><span class="tick t3">155 g</span>
+        <div class="rain" id="rain"></div>
       </div>
-    </section>
+      <div class="pop-note note-a">95% confidence describes the long-run performance of the method</div>
+    </div>
+  </div>
+</section>
 
-    <section class="scene confidence" data-step="4">
-      <div class="shell">
-        <div class="eyebrow reveal">04 — ADMIT THE UNCERTAINTY</div>
-        <h2 class="reveal">Confidence Intervals</h2>
-        <p class="reveal">One estimate is a dot. A <b>confidence interval</b> gives a range of plausible values for the population parameter: point estimate ± margin of error.</p>
-        <div class="ci-track reveal">
-          <div class="axis"></div><div class="ci-range"></div><div class="point">x̄</div>
-          <span class="tick t1">145 g</span><span class="tick t2">150 g</span><span class="tick t3">155 g</span>
-        </div>
-        <p class="transition-copy reveal">95% confidence is about the long-run method.</p>
-        <p class="reveal">If we repeatedly sampled and built intervals the same way, about 95% of those intervals would contain the true population average.</p>
-        <div class="intervals reveal" aria-label="repeated confidence intervals">
-          <i class="interval hit" style="--h:76%"></i><i class="interval hit" style="--h:58%"></i><i class="interval hit" style="--h:84%"></i><i class="interval hit" style="--h:65%"></i><i class="interval hit" style="--h:92%"></i><i class="interval miss" style="--h:48%"></i><i class="interval hit" style="--h:73%"></i><i class="interval hit" style="--h:88%"></i><i class="interval hit" style="--h:63%"></i><i class="interval hit" style="--h:81%"></i>
-        </div>
+<section class="chapter hypothesis" data-step="5">
+  <div class="sticky">
+    <div class="inner">
+      <div class="hypo-title"><div class="kicker">05 — PUT A CLAIM ON TRIAL</div><h2>Hypothesis<br>Testing</h2><p>We compare two competing claims about the population using sample evidence.</p></div>
+      <article class="h0"><b>H₀</b><h3>Null</h3><p>The default or status quo — usually “no effect,” “no difference,” or “no change.”</p></article>
+      <div class="vs">VS</div>
+      <article class="h1"><b>H₁</b><h3>Alternative</h3><p>The claim we are trying to find evidence for.</p></article>
+      <div class="verdict">Would our sample look strange<br>if H₀ were actually true?</div>
+    </div>
+  </div>
+</section>
+
+<section class="chapter pvalue" data-step="6">
+  <div class="sticky">
+    <div class="inner">
+      <div class="p-copy"><div class="kicker">06 — HOW SURPRISING IS THE DATA?</div><h2>The<br>p-value</h2><p>The p-value is the probability of seeing our sample result — or something more extreme — if the null hypothesis were entirely true.</p></div>
+      <div class="bell">
+        <svg viewBox="0 0 900 430" preserveAspectRatio="none">
+          <path d="M50 355H850" stroke="#15370D" stroke-width="6" stroke-linecap="round"/>
+          <path class="curve-path" d="M80 355 C230 348 250 72 450 72 C650 72 670 348 820 355" fill="none" stroke="#15370D" stroke-width="9" stroke-linecap="round"/>
+          <path class="tail" d="M646 316 C696 344 747 352 820 355 L820 355 L646 355 Z" fill="#D46743"/>
+          <g class="marker"><line x1="646" y1="316" x2="646" y2="365" stroke="#7C0E44" stroke-width="7" stroke-dasharray="12 9"/><circle cx="646" cy="316" r="13" fill="#7C0E44"/><text x="603" y="292" font-size="28" font-family="Trebuchet MS" fill="#7C0E44">our result</text></g>
+        </svg>
+        <div class="pbubble">this shaded tail<br>= this extreme<br>or more</div>
+        <article class="decision-card left"><strong>small p</strong><p>Typically &lt; 0.05 → reject H₀ in favor of H₁.</p></article>
+        <article class="decision-card right"><strong>large p</strong><p>Not enough evidence to reject H₀.</p></article>
       </div>
-    </section>
+    </div>
+  </div>
+</section>
 
-    <section class="scene hypothesis" data-step="5">
-      <div class="shell">
-        <div class="eyebrow reveal">05 — PUT A CLAIM ON TRIAL</div>
-        <h2 class="reveal">Hypothesis Testing</h2>
-        <p class="reveal">Hypothesis testing compares two competing claims about a population using evidence from the sample.</p>
-        <div class="versus">
-          <article class="hypo reveal"><b>H₀</b><h3>Null hypothesis</h3><p>The default or status quo: usually “no effect,” “no difference,” or “no change.”</p></article>
-          <div class="vs reveal">VS</div>
-          <article class="hypo alt reveal"><b>H₁</b><h3>Alternative</h3><p>The claim we are trying to find evidence for.</p></article>
-        </div>
-        <p class="transition-copy reveal" style="margin-top:4rem">Now ask: would our data look weird if H₀ were true?</p>
-      </div>
-    </section>
+<section class="chapter final short" data-step="6">
+  <div class="sticky">
+    <div class="inner">
+      <div class="final-center"><div class="kicker">THE WHOLE LOGIC</div><h2>From a sample<br>to a careful conclusion.</h2><div class="flow"><span>Population</span><span>→ Sample</span><span>→ Statistic</span><span>→ Estimate</span><span>→ Uncertainty</span><span>→ Decision</span></div><p style="max-width:34ch;margin:0 auto">Inference is a structured way to learn from limited data while keeping uncertainty visible.</p></div>
+    </div>
+  </div>
+</section>
+</main>
+<script>
+const clamp=(n,a=0,b=1)=>Math.max(a,Math.min(b,n));
+const lerp=(a,b,t)=>a+(b-a)*t;
+const ease=t=>t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;
+const chapters=[...document.querySelectorAll('.chapter')];
+const bar=document.getElementById('globalBar'), count=document.getElementById('count');
 
-    <section class="scene pvalue" data-step="6">
-      <div class="shell">
-        <div class="eyebrow reveal">06 — MEASURE HOW SURPRISING THE DATA ARE</div>
-        <h2 class="reveal">The p-value</h2>
-        <p class="reveal">The p-value is the probability of seeing our sample data — or something more extreme — <b>if the null hypothesis were entirely true</b>.</p>
-        <div class="curve-wrap reveal">
-          <svg class="curve-svg" viewBox="0 0 900 420" preserveAspectRatio="none" role="img" aria-label="cartoon null distribution with shaded tail">
-            <path d="M50 350 H850" stroke="#15370D" stroke-width="6" stroke-linecap="round"/>
-            <path d="M90 350 C230 340 255 70 450 70 C645 70 670 340 810 350" fill="none" stroke="#15370D" stroke-width="8" stroke-linecap="round"/>
-            <path d="M650 314 C690 340 735 348 810 350 L810 350 L650 350 Z" fill="#D46743" opacity=".9"/>
-            <line x1="650" y1="314" x2="650" y2="360" stroke="#7C0E44" stroke-width="7" stroke-dasharray="12 10"/>
-            <circle cx="650" cy="314" r="13" fill="#7C0E44"/>
-            <text x="615" y="292" font-size="30" font-family="Trebuchet MS" fill="#7C0E44">our result</text>
-          </svg>
-          <div class="p-badge">shaded tail<br>= “this extreme<br>or more”</div>
-        </div>
-        <div class="decision">
-          <article class="reveal"><strong>small p</strong><p>Typically below 0.05 → the data are unusual under H₀ → reject H₀ in favor of the alternative.</p></article>
-          <article class="reveal"><strong>large p</strong><p>Not enough evidence to reject H₀ → keep the status quo for now.</p></article>
-        </div>
-      </div>
-    </section>
+const people=document.getElementById('people');
+const sampled=[7,13,18,25,31,38,42,47];
+for(let i=0;i<52;i++){
+  const d=document.createElement('i');d.className='person'+(sampled.includes(i)?' sampled':'');
+  const col=i%8,row=Math.floor(i/8);
+  d.style.left=(col*12.1+(row%2)*2.7)+'%'; d.style.top=(row*14.1+(col%3)*1.3)+'%';
+  d.dataset.x=0;d.dataset.y=0;people.appendChild(d);
+}
+const apples=[...document.querySelectorAll('.apple')];
+const applePos=[[7,19,-8],[35,6,7],[71,18,12],[16,68,-5],[50,72,8],[78,62,-10]];
+apples.forEach((a,i)=>{a.style.left=applePos[i][0]+'%';a.style.top=applePos[i][1]+'%';a.dataset.rot=applePos[i][2]});
 
-    <section class="scene finale" data-step="6">
-      <div class="shell">
-        <div class="eyebrow reveal">THE WHOLE FLOW</div>
-        <h2 class="reveal">From a sample<br>to a careful conclusion.</h2>
-        <div class="loop reveal">
-          <span>Population</span><span>→ Sample</span><span>→ Statistic</span><span>→ Estimate</span><span>→ Uncertainty</span><span>→ Decision</span>
-        </div>
-        <p class="reveal">Inference is not magic certainty. It is a structured way to use limited data while keeping uncertainty visible.</p>
-        <p class="footer-note reveal">Built as a scroll-guided lesson from the supplied Statistical Inference guide.</p>
-      </div>
-    </section>
-  </main>
+const rain=document.getElementById('rain');
+for(let i=0;i<12;i++){
+  const x=6+i*7.8; const h=28+(i%5)*8;
+  const el=document.createElement('i');el.style.left=x+'%';el.style.height=h+'%';el.className=(i===9?'miss':'');
+  rain.appendChild(el);
+}
 
-  <script>
-    const cloud = document.getElementById('dotCloud');
-    for(let i=0;i<48;i++){
-      const d=document.createElement('i');
-      d.className='dot'+([5,12,19,28,34,43].includes(i)?' sampled':'');
-      cloud.appendChild(d);
-    }
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('show');else e.target.classList.remove('show')}),{threshold:.55});
+document.querySelectorAll('.pop-note').forEach(n=>io.observe(n));
 
-    const io = new IntersectionObserver((entries)=>{
-      entries.forEach((entry)=>{
-        if(entry.isIntersecting) entry.target.classList.add('visible');
-      });
-    },{threshold:.16,rootMargin:'0px 0px -6% 0px'});
-    document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+function localProgress(section){
+  const r=section.getBoundingClientRect();
+  const scrollable=section.offsetHeight-innerHeight;
+  return clamp(-r.top/scrollable);
+}
+function set(el,props){if(!el)return;Object.assign(el.style,props)}
 
-    const scenes=[...document.querySelectorAll('.scene')];
-    const bar=document.getElementById('progressBar');
-    const txt=document.getElementById('progressText');
-    const clamp=(n,a,b)=>Math.max(a,Math.min(b,n));
+let ticking=false;
+function render(){
+  ticking=false;
+  const max=document.documentElement.scrollHeight-innerHeight;
+  const gp=max?scrollY/max:0;bar.style.width=(gp*100)+'%';
+  let active=1,best=99999;
+  chapters.forEach(ch=>{const d=Math.abs(ch.getBoundingClientRect().top);if(d<best){best=d;active=+ch.dataset.step||1}});
+  count.textContent=String(active).padStart(2,'0')+' / 06';
 
-    function onScroll(){
-      const max=document.documentElement.scrollHeight-innerHeight;
-      const pct=max?scrollY/max:0;
-      bar.style.width=(pct*100).toFixed(1)+'%';
-
-      let active=1, closest=Infinity;
-      scenes.forEach(s=>{
-        const r=s.getBoundingClientRect();
-        const dist=Math.abs(r.top-innerHeight*.42);
-        if(dist<closest){closest=dist;active=Number(s.dataset.step||1)}
-      });
-      txt.textContent=String(active).padStart(2,'0')+' / 06';
-
-      document.querySelectorAll('[data-float]').forEach(el=>{
-        const speed=Number(el.dataset.float);
-        el.style.transform='translateY('+(scrollY*speed)+'px) rotate('+(scrollY*speed*.035)+'deg)';
-      });
-
-      document.querySelectorAll('.interval').forEach((el,i)=>{
-        const r=el.getBoundingClientRect();
-        const local=clamp(1-(r.top-innerHeight*.8)/innerHeight,0,1);
-        el.style.transform='scaleY('+(0.25+local*.75)+') rotate('+(i%2?2:-2)+'deg)';
-      });
-    }
-    addEventListener('scroll',onScroll,{passive:true}); onScroll();
-
-    document.querySelectorAll('.card,.hypo,.symbol-card,.curve-wrap').forEach(card=>{
-      card.addEventListener('pointermove',e=>{
-        const r=card.getBoundingClientRect();
-        const x=(e.clientX-r.left)/r.width-.5, y=(e.clientY-r.top)/r.height-.5;
-        card.style.transform='perspective(900px) rotateX('+(-y*3)+'deg) rotateY('+(x*3)+'deg)';
-      });
-      card.addEventListener('pointerleave',()=>card.style.transform='');
+  // HERO: headline drifts upward, symbols orbit, then the cream disc expands into the next scene.
+  {
+    const s=chapters[0],p=localProgress(s),q=ease(p);
+    document.querySelectorAll('.hero-word').forEach((w,i)=>{
+      const yy=lerp(0,-120-i*30,clamp((p-.08*i)/.75));
+      const sc=lerp(1,.86,clamp(p/.8)); const rot=lerp(0,(i%2?3:-3),p);
+      w.style.transform='translateY('+yy+'px) scale('+sc+') rotate('+rot+'deg)';
+      w.style.opacity=1-clamp((p-.63)/.22);
     });
-  </script>
+    set(document.querySelector('.hero-copy p'),{transform:'translateY('+lerp(0,-80,p)+'px)',opacity:String(1-clamp((p-.48)/.25))});
+    set(document.querySelector('.scroll-note'),{opacity:String(1-clamp(p/.25)),transform:'translateY('+lerp(0,40,p)+'px)'});
+    const ring=document.querySelector('[data-ring]');ring.style.transform='rotate('+(p*140)+'deg) scale('+lerp(1,1.18,p)+')';
+    document.querySelectorAll('[data-hero-float]').forEach((el,i)=>{
+      const a=p*Math.PI*2+(i*2.1),rad=30+20*i;
+      el.style.transform='translate('+Math.cos(a)*rad+'px,'+Math.sin(a)*rad+'px) rotate('+(p*100*(i%2?1:-1))+'deg) scale('+lerp(1,.75,p)+')';
+    });
+    const wipe=document.querySelector('[data-hero-wipe]');
+    const wp=clamp((p-.62)/.38); wipe.style.transform='translate(-50%,-50%) scale('+lerp(.01,8,ease(wp))+')';
+  }
+
+  // POPULATION: entire population drifts, selected points peel out and gather into a sample.
+  {
+    const s=chapters[1],p=localProgress(s),sampleP=ease(clamp((p-.2)/.48)),out=ease(clamp((p-.72)/.28));
+    const dots=[...people.children];
+    dots.forEach((d,i)=>{
+      const is=sampled.includes(i);
+      if(is){
+        const targetX=180+(sampled.indexOf(i)%4)*56;
+        const targetY=130+Math.floor(sampled.indexOf(i)/4)*70;
+        const r=d.getBoundingClientRect(),pr=people.getBoundingClientRect();
+        const cx=parseFloat(d.style.left)/100*pr.width, cy=parseFloat(d.style.top)/100*pr.height;
+        d.style.transform='translate('+lerp(0,targetX-cx,sampleP)+'px,'+lerp(0,targetY-cy,sampleP)+'px) scale('+lerp(1,1.28,sampleP)+') rotate('+lerp(0,(i%2?8:-8),sampleP)+'deg)';
+      }else{
+        d.style.transform='translate('+lerp(0,(i%2?18:-18),out)+'px,'+lerp(0,-30,out)+'px) scale('+lerp(1,.78,out)+')';
+        d.style.opacity=String(1-.55*out);
+      }
+    });
+    const l=document.querySelector('.sample-lasso');l.style.opacity=String(clamp((p-.38)/.14));l.style.transform='scale('+lerp(.1,1,ease(clamp((p-.35)/.2)))+') rotate('+lerp(-15,-4,sampleP)+'deg)';
+    const tag=document.querySelector('.population .sample-tag');tag.style.opacity=String(clamp((p-.48)/.14));tag.style.filter='blur('+lerp(12,0,clamp((p-.48)/.14))+'px)';
+    const b=document.querySelector('.population .bridge');b.style.opacity=String(clamp((p-.66)/.12)*(1-clamp((p-.92)/.08)));b.style.transform='translate(-50%,'+lerp(35,0,ease(clamp((p-.66)/.16)))+'px)';
+  }
+
+  // PARAMETERS: two giant cards fly in from opposite sides, collide into alignment, then peel apart.
+  {
+    const p=localProgress(chapters[2]),enter=ease(clamp(p/.36)),hold=clamp((p-.34)/.34),leave=ease(clamp((p-.72)/.28));
+    const L=document.querySelector('.big-card.left'),R=document.querySelector('.big-card.right');
+    const lx=lerp(-110,0,enter)+lerp(0,-38,leave),rx=lerp(110,0,enter)+lerp(0,38,leave);
+    L.style.transform='translateX('+lx+'vw) rotate('+lerp(-14,-2,enter)+'deg) translateY('+lerp(0,-40,leave)+'px)';
+    R.style.transform='translateX('+rx+'vw) rotate('+lerp(14,2,enter)+'deg) translateY('+lerp(0,40,leave)+'px)';
+    const rule=document.querySelector('.center-rule');const rp=clamp((p-.38)/.2);rule.style.opacity=String(rp*(1-leave));rule.style.transform='translate(-50%,'+lerp(80,0,ease(rp))+'px) scale('+lerp(.8,1,ease(rp))+')';
+  }
+
+  // ESTIMATE: apples fall into the scale, the scale settles, then 150g bursts forward.
+  {
+    const p=localProgress(chapters[3]),gather=ease(clamp((p-.08)/.46)),burst=ease(clamp((p-.62)/.22)),fade=clamp((p-.88)/.12);
+    const world=document.querySelector('.apple-world');const wr=world.getBoundingClientRect();
+    apples.forEach((a,i)=>{
+      const left=applePos[i][0]/100*wr.width,top=applePos[i][1]/100*wr.height;
+      const tx=wr.width*.5-left-50+(i%2?26:-26),ty=wr.height*.48-top-40+(i%3)*10;
+      a.style.transform='translate('+lerp(0,tx,gather)+'px,'+lerp(-180-(i*22),ty,gather)+'px) rotate('+lerp(applePos[i][2],0,gather)+'deg) scale('+lerp(.65,1,gather)+')';
+      a.style.opacity=String(1-burst*.78);
+    });
+    const sc=document.querySelector('.scale');sc.style.transform='translate(-50%,-50%) scale('+lerp(.25,1,ease(clamp((p-.22)/.3)))+') rotate('+lerp(-8,0,gather)+'deg)';
+    const num=document.querySelector('.number-pop');num.style.opacity=String(burst*(1-fade));num.style.transform='translate(-50%,-50%) scale('+lerp(.1,1.05,burst)+') rotate('+lerp(-8,2,burst)+'deg)';
+  }
+
+  // CONFIDENCE: build axis → point → interval → repeated intervals rise.
+  {
+    const p=localProgress(chapters[4]);
+    const ap=ease(clamp((p-.04)/.22)),dp=ease(clamp((p-.18)/.18)),rp=ease(clamp((p-.33)/.24)),rainP=ease(clamp((p-.56)/.32));
+    const axis=document.querySelector('.confidence .axis');axis.style.transform='scaleX('+lerp(.02,1,ap)+')';
+    const dot=document.querySelector('.dot-est');dot.style.opacity=String(dp);dot.style.transform='translateX(-50%) scale('+lerp(.1,1,dp)+') rotate('+lerp(-20,0,dp)+'deg)';
+    const range=document.querySelector('.range');range.style.opacity=String(rp);range.style.transform='scaleX('+lerp(.01,1,rp)+')';
+    document.querySelectorAll('.confidence .tick').forEach((t,i)=>{const tp=clamp((p-.38-i*.035)/.14);t.style.opacity=String(tp);t.style.transform='translateY('+lerp(20,0,tp)+'px)'});
+    [...rain.children].forEach((el,i)=>{const ep=ease(clamp((rainP-i*.045)/.55));el.style.transform='scaleY('+ep+') rotate('+(i%2?1.5:-1.5)+'deg)';el.style.opacity=String(ep)});
+  }
+
+  // HYPOTHESIS: H0 and H1 slam in from the sides, VS pops, cards push against one another, verdict rises.
+  {
+    const p=localProgress(chapters[5]),enter=ease(clamp((p-.06)/.34)),fight=ease(clamp((p-.43)/.28)),v=ease(clamp((p-.68)/.2));
+    const h0=document.querySelector('.h0'),h1=document.querySelector('.h1');
+    h0.style.transform='translateX('+lerp(-80,lerp(0,6,fight),enter)+'vw) rotate('+lerp(-12,lerp(-2,4,fight),enter)+'deg)';
+    h1.style.transform='translateX('+lerp(80,lerp(0,-6,fight),enter)+'vw) rotate('+lerp(12,lerp(2,-4,fight),enter)+'deg)';
+    const vs=document.querySelector('.vs');vs.style.opacity=String(clamp((p-.28)/.15));vs.style.transform='translate(-50%,-50%) scale('+lerp(.1,1.05,ease(clamp((p-.28)/.18)))+') rotate('+lerp(-30,-5,fight)+'deg)';
+    const verdict=document.querySelector('.verdict');verdict.style.opacity=String(v);verdict.style.transform='translate(-50%,'+lerp(70,0,v)+'px)';
+  }
+
+  // P-VALUE: draw curve, slide observed result into tail, shade tail, then blur-pop decision cards.
+  {
+    const p=localProgress(chapters[6]),draw=ease(clamp((p-.04)/.3)),mark=ease(clamp((p-.31)/.22)),tailP=ease(clamp((p-.48)/.16)),dec=ease(clamp((p-.64)/.22));
+    document.querySelector('.curve-path').style.strokeDashoffset=1300*(1-draw);
+    const marker=document.querySelector('.marker');marker.style.opacity=String(mark);marker.style.transform='translateX('+lerp(220,0,mark)+'px)';
+    document.querySelector('.tail').style.opacity=String(tailP);
+    const pb=document.querySelector('.pbubble');pb.style.opacity=String(tailP);pb.style.transform='scale('+lerp(.1,1,tailP)+') rotate('+lerp(15,5,tailP)+'deg)';
+    document.querySelectorAll('.decision-card').forEach((d,i)=>{const q=clamp((dec-i*.12)/.75);d.style.opacity=String(q);d.style.filter='blur('+lerp(14,0,q)+'px)';d.style.transform='translateY('+lerp(32,0,q)+'px)'});
+  }
+
+  // FINAL: whole sequence condenses into one centered map.
+  {
+    const p=localProgress(chapters[7]),q=ease(clamp((p-.12)/.55)),out=clamp((p-.88)/.12);
+    const f=document.querySelector('.final-center');f.style.opacity=String(q*(1-out));f.style.transform='translate(-50%,-50%) scale('+lerp(.78,1,q)+') rotate('+lerp(-2,0,q)+'deg)';
+    document.querySelectorAll('.flow span').forEach((s,i)=>{const sp=ease(clamp((p-.24-i*.045)/.42));s.style.transform='translateY('+lerp(35,0,sp)+'px) scale('+lerp(.78,1,sp)+')';s.style.opacity=String(sp)});
+  }
+}
+function requestRender(){if(!ticking){ticking=true;requestAnimationFrame(render)}}
+addEventListener('scroll',requestRender,{passive:true});addEventListener('resize',requestRender);render();
+</script>
 </body>
 </html>
